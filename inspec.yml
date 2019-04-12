@@ -1,0 +1,5 @@
+name: inspec-bosh
+title: Bosh inspec resource
+summary: This resource pack provides compliance for Bosh
+version: 0.0.1
+license: BSD V3
