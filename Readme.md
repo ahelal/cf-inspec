@@ -30,7 +30,7 @@ depends:
 2. edit inspec.yml to reflect the depends
 3. define your tests in `your_profile/control`
 
-Check for (examples](blob/master/test/example/controls/example.rb)
+Check the [example](blob/master/test/example/controls/example.rb)
 
 ### Available resources
 
