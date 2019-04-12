@@ -27,8 +27,8 @@ depends:
     url: https://github.com/ahelal/inspec-bosh/archive/master.tar.gz
 ```
 
-2. edit inspec.yml to reflect the depends
-3. define your tests in `your_profile/control`
+2. Edit inspec.yml to reflect the depends
+3. Define your tests in `your_profile/control`
 
 Check the [example](blob/master/test/example/controls/example.rb)
 
@@ -38,3 +38,4 @@ Check the [example](blob/master/test/example/controls/example.rb)
 * `om_deployed_product` verify tiles are deployed and version
 * `om_product_properties`verify tile properties
 * `om_resource_job` verify resources for a job
+* `om_assigned_stemcells` verify version(s) of assigned stemcells

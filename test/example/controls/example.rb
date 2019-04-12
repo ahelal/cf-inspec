@@ -28,3 +28,12 @@ control 'CF tile' do
     its(%w[instance_type id]) { should eq 'm3.medium' }
   end
 end
+
+control 'stemcell' do
+  describe om_assigned_stemcells('cf') do
+    its('version') { should eq '97.57' }
+  end
+  describe om_assigned_stemcells do
+    its('versions') { should all(include('97.')) }
+  end
+end

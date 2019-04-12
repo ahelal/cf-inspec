@@ -6,8 +6,10 @@ class OmResourceJob < Inspec.resource(1)
   desc ''
 
   example "
-    describe om_deployed_product('pivotal-mysql') do
-      its('product_version') { should match /2.4.4/ }
+    describe om_resource_job('cf', 'diego_cell') do
+      its('instances') { should eq 10 }
+      its('additional_vm_extensions') { should eq %w[vm_ext_configure_load_balancer vm_ext_setting_additional_security_groups] }
+      its(%w[instance_type id]) { should eq 'm3.medium' }
     end
   "
 
