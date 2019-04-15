@@ -1,7 +1,0 @@
----
-lockfile_version: 1
-depends:
-- name: inspec-bosh
-  resolved_source:
-    path: "/Users/aabdelwahab/workspace/inspec-bosh"
-  version_constraints: []
