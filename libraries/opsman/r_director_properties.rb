@@ -1,36 +1,33 @@
 
-require 'pp'
-
-class OmProductProperties < Inspec.resource(1)
-  name 'om_product_properties'
+class OmDirectorProperties < Inspec.resource(1)
+  name 'om_director_properties'
   desc ''
 
   example "
-    describe om_deployed_product('pivotal-mysql') do
-      its('product_version') { should match /2.4.4/ }
-    end
+  describe om_director_properties do
+    its(%w[iaas_configuration encrypted]) { should eq true }
+    its(%w[director_configuration ntp_servers_string]) { should eq 'us.pool.ntp.org, time.google.com' }
+    its(%w[iaas_configuration tls_enabled]) { should eq true }
+    its(%w[syslog_configuration enabled]) { should eq true }
+  end
   "
 
   include ObjectTraverser
 
   attr_reader :params, :raw_content
 
-  def initialize(product_type)
+  def initialize
     @params = {}
     begin
       @opsman = Opsman.new
-      @product_type = product_type
-      @params = product_properties
+      @params = director_properties
     rescue => e
       raise Inspec::Exceptions::ResourceSkipped, "OM API error: #{e}"
     end
   end
 
-  def product_properties
-    guid = @opsman.product_guid(@product_type)
-    return nil if guid.nil?
-    response = @opsman.get("/api/v0/staged/products/#{guid}/properties",
-                           'Accept' => 'application/json')
+  def director_properties
+    response = @opsman.get('/api/v0/staged/director/properties', 'Accept' => 'application/json')
     JSON.parse(response.body)
   end
 

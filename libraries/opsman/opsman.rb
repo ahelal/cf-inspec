@@ -1,9 +1,9 @@
 require 'net/http'
 require 'openssl'
 require 'json'
-require 'base64'
-require 'opsman/r_info'
 require 'opsman/r_deployed_product'
+require 'opsman/r_director_properties'
+require 'opsman/r_info'
 require 'opsman/r_product_properties'
 require 'opsman/r_resource_job'
 require 'opsman/r_stemcells'
@@ -67,9 +67,7 @@ class Opsman
     uri.path = '/uaa/oauth/token'
     uri.user = 'opsman'
 
-    case response = Net::HTTP.post_form(uri, 'grant_type' => 'password',
-                                             'username' => @om_username,
-                                             'password' => @om_password)
+    case response = Net::HTTP.post_form(uri, 'grant_type' => 'password', 'username' => @om_username, 'password' => @om_password)
     when Net::HTTPSuccess then
       decoded = JSON.parse(response.body)
       @access_token = decoded['access_token']

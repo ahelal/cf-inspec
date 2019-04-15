@@ -38,4 +38,9 @@ Check the [example](blob/master/test/example/controls/example.rb)
 * `om_deployed_product` verify tiles are deployed and version
 * `om_product_properties`verify tile properties
 * `om_resource_job` verify resources for a job
+* `om_director_properties` verify director properties
 * `om_assigned_stemcells` verify version(s) of assigned stemcells
+
+### Improvements
+
+* Cache API calls as it slow

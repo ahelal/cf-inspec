@@ -4,13 +4,22 @@ title 'OM sample'
 
 control 'OM version' do
   describe om_info do
-    its('version') { should match /2.3/ }
+    its('version') { should match(/2.3/) }
+  end
+end
+
+control 'OM director properties' do
+  describe om_director_properties do
+    its(%w[iaas_configuration encrypted]) { should eq true }
+    its(%w[director_configuration ntp_servers_string]) { should eq 'us.pool.ntp.org, time.google.com' }
+    its(%w[iaas_configuration tls_enabled]) { should eq true }
+    its(%w[syslog_configuration enabled]) { should eq true }
   end
 end
 
 control 'Mysql tile' do
   describe om_deployed_product('cf') do
-    its('version') { should match /2.4.4/ }
+    its('version') { should match(/2.4.4/) }
   end
 
   describe om_product_properties('pivotal-mysql') do

@@ -10,4 +10,4 @@ supports:
   platform: os
 depends:
   - name: inspec-bosh
-    purath: ../../
+    path: ../../
