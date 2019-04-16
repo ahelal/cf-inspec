@@ -40,7 +40,35 @@ depends:
 * `om_director_properties` verify director properties
 * `om_assigned_stemcells` verify version(s) of assigned stemcells
 
-Check the [examples](blob/master/test/example/controls)
+Check the [examples](test/example/controls)
+
+### Running in Concourse
+
+Add the following task to your pipeline and map the location of your tests to the "tests" input of the task.
+
+```yaml
+---
+resources:
+- name: bosh-inspec
+  type: git
+  source:
+    uri: https://github.com/ahelal/bosh-inspec.git
+    branch: master
+
+jobs:
+- name: run-inspec
+  plan:
+  - get: bosh-inspec
+  - task: run-inspec
+    file: bosh-inspec/task/task.yml
+    input_mapping:
+      tests: bosh-inspec
+    params:
+      OM_TARGET: ((OM_TARGET))
+      OM_USERNAME: ((OM_USERNAME))
+      OM_PASSWORD: ((OM_PASSWORD))
+      TESTS_PATH: test/example
+```
 
 ### Improvements
 
