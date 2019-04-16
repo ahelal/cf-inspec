@@ -17,5 +17,6 @@ params:
   OM_SKIP_SSL_VALIDATION:
 
 run:
-  path: inspec tests/$TESTS_PATH
-
+  path: inspec 
+  args:
+  - tests/$TESTS_PATH
