@@ -1,7 +1,6 @@
+# encoding: utf-8
 
-title 'OM product properties'
-
-control 'OM product properties pivotal mysql ' do
+control 'OM product properties pivotal mysql' do
   title 'should be match required state'
   describe om_product_properties('pivotal-mysql') do
     its(['properties', '.properties.request_timeout', 'value']) { should eq 120 }

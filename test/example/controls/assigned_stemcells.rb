@@ -7,7 +7,7 @@ control 'Assigned PAS stemcell' do
   end
 end
 
-control 'All assinged stemcell' do
+control 'All assigned stemcell' do
   title 'should be ubuntu xenial'
   describe om_assigned_stemcells do
     its('versions') { should all(include('97.')) }

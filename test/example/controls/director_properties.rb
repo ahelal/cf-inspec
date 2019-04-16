@@ -1,6 +1,4 @@
-
-
-title ''
+# encoding: utf-8
 
 control 'OM director properties' do
   title 'should be deployed'
