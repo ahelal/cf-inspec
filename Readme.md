@@ -30,7 +30,6 @@ depends:
 2. Edit inspec.yml to reflect the depends
 3. Define your tests in `your_profile/control`
 
-Check the [example](blob/master/test/example/controls/example.rb)
 
 ### Available resources
 
@@ -40,6 +39,8 @@ Check the [example](blob/master/test/example/controls/example.rb)
 * `om_resource_job` verify resources for a job
 * `om_director_properties` verify director properties
 * `om_assigned_stemcells` verify version(s) of assigned stemcells
+
+Check the [examples](blob/master/test/example/controls)
 
 ### Improvements
 
