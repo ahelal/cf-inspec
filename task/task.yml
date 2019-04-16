@@ -23,4 +23,4 @@ run:
   - |
     set -e
     echo "Running tests ..."
-    inspect exec tests/$TESTS_PATH
+    inspec exec tests/$TESTS_PATH
