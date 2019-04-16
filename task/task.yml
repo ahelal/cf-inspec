@@ -1,0 +1,14 @@
+---
+platform: linux
+
+inputs:
+- name: tests
+
+params:
+  OM_TARGET:
+  OM_USERNAME:
+  OM_PASSWORD:
+  OM_SKIP_SSL_VALIDATION:
+
+run:
+  path: inspec tests
