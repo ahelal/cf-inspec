@@ -17,6 +17,10 @@ params:
   OM_SKIP_SSL_VALIDATION:
 
 run:
-  path: inspec 
+  path: sh
   args:
-  - tests/$TESTS_PATH
+  - -exc
+  - |
+    set -e
+    echo "Running tests ..."
+    inspect exec tests/$TESTS_PATH
