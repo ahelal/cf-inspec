@@ -1,6 +1,12 @@
 ---
 platform: linux
 
+image_resource:
+  type: docker-image
+  source:
+    repository: chef/inspec
+    tag: stable
+
 inputs:
 - name: tests
 
@@ -11,4 +17,4 @@ params:
   OM_SKIP_SSL_VALIDATION:
 
 run:
-  path: inspec tests
+  path: inspec tests/$TESTS_PATH
