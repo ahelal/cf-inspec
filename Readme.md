@@ -72,4 +72,4 @@ jobs:
 
 ### Improvements
 
-* Cache API calls as it slow
+* Cache API results
