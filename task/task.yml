@@ -18,3 +18,4 @@ params:
 
 run:
   path: inspec tests/$TESTS_PATH
+
