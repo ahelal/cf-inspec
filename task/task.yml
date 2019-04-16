@@ -17,7 +17,7 @@ params:
   OM_SKIP_SSL_VALIDATION:
 
 run:
-  path: sh
+  path: /bin/sh
   args:
   - -exc
   - |
