@@ -1,0 +1,26 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: chef/inspec
+    tag: stable
+
+inputs:
+- name: tests
+
+params:
+  OM_TARGET:
+  OM_USERNAME:
+  OM_PASSWORD:
+  OM_SKIP_SSL_VALIDATION:
+
+run:
+  path: /bin/sh
+  args:
+  - -exc
+  - |
+    set -e
+    echo "Running tests ..."
+    inspec exec tests/$TESTS_PATH

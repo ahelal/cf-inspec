@@ -1,0 +1,21 @@
+---
+resources:
+- name: bosh-inspec
+  type: git
+  source:
+    uri: https://github.com/ahelal/bosh-inspec.git
+    branch: origin/task
+
+jobs:
+- name: run-inspec
+  plan:
+  - get: bosh-inspec
+  - task: run-inspec
+    file: bosh-inspec/task/task.yml
+    input_mapping:
+      tests: bosh-inspec
+    params:
+      OM_TARGET: ((OM_TARGET))
+      OM_USERNAME: ((OM_USERNAME))
+      OM_PASSWORD: ((OM_PASSWORD))
+      TESTS_PATH: test/example
