@@ -27,8 +27,7 @@ class OmDirectorProperties < Inspec.resource(1)
   end
 
   def director_properties
-    response = @opsman.get('/api/v0/staged/director/properties', 'Accept' => 'application/json')
-    JSON.parse(response.body)
+    @opsman.get('/api/v0/staged/director/properties', 'Accept' => 'application/json')
   end
 
   def method_missing(*keys)

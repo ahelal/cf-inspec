@@ -30,8 +30,7 @@ class OmStemcellsJob < Inspec.resource(1)
   end
 
   def product_stemcell
-    response = @opsman.get('/api/v0/stemcell_assignments', 'Accept' => 'application/json')
-    stemcell_assignments = JSON.parse(response.body)
+    stemcell_assignments = @opsman.get('/api/v0/stemcell_assignments', 'Accept' => 'application/json')
     stemcell_assignments = stemcell_assignments['products']
 
     if @product_type.nil?
