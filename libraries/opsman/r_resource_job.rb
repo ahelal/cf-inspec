@@ -1,6 +1,4 @@
 
-require 'pp'
-
 class OmResourceJob < Inspec.resource(1)
   name 'om_resource_job'
   desc ''

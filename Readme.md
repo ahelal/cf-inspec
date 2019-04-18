@@ -6,17 +6,10 @@ This InSpec resource pack that provides the required resources to write tests fo
 
 You need [inspec](https://www.inspec.io/downloads/) :)
 
-### Opsman variables
-
-You need to export opsman
-* `OM_TARGET` with schema eg. `https://opsman.example.com`
-* `OM_USERNAME`
-* `OM_PASSWORD`
-
 ## Usage
 ### Create a new profile
 
-1. ```sh $ inspec init profile my-profile```
+1. `$ inspec init profile my-profile`
 
 ```yaml
 name: my-profile
@@ -30,6 +23,21 @@ depends:
 2. Edit inspec.yml to reflect the depends
 3. Define your tests in `your_profile/control`
 
+### Configuration for Opsman resources
+
+You need to export **required** opsman variables
+* `OM_TARGET` with schema eg. `https://opsman.example.com`
+* `OM_USERNAME`
+* `OM_PASSWORD`
+
+Optional variables
+* `OM_SKIP_SSL_VALIDATION` defaults to `false`
+
+### API caching
+
+If you have many tests API calls might be slow and some tests use same API endpoints, but will go fetch for every test. You can enable caching to increase test speed.
+* `INSPEC_CACHE_TIME` defaults to `0` seconds
+* `INSPEC_CACHE_DIR` defaults to `~/.inspec_cache`
 
 ### Available resources
 
@@ -39,6 +47,7 @@ depends:
 * `om_resource_job` verify resources for a job
 * `om_director_properties` verify director properties
 * `om_assigned_stemcells` verify version(s) of assigned stemcells
+* `om_installations` verify opsman apply changes
 
 Check the [examples](test/example/controls)
 

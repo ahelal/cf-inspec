@@ -1,4 +1,3 @@
-require 'pp'
 
 class OmInfo < Inspec.resource(1)
   name 'om_info'

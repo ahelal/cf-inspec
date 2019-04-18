@@ -1,9 +1,14 @@
-require 'pp'
 
 class OmInstallation < Inspec.resource(1)
   name 'om_installations'
   desc 'Verify installation data'
-
+  example "
+    describe om_installations do
+      its('status_of_last_run') { should eq 'successful' }
+      its('status_of_last_completed_run') { should eq 'successful' }
+      its('duration_of_last_completed_run') { should be < 60 * 60 }
+    end
+  "
   include ObjectTraverser
 
   attr_reader :params, :raw_content

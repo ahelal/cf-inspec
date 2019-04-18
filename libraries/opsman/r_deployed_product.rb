@@ -1,6 +1,4 @@
 
-require 'pp'
-
 class OmDeployedProduct < Inspec.resource(1)
   name 'om_deployed_product'
   desc ''

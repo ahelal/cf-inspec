@@ -1,6 +1,4 @@
 
-require 'pp'
-
 class OmProductProperties < Inspec.resource(1)
   name 'om_product_properties'
   desc ''

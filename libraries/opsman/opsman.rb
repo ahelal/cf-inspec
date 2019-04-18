@@ -82,12 +82,10 @@ class Opsman
     http = construct_http_client(@om_target.to_s)
     request = Net::HTTP::Post.new('/uaa/oauth/token')
     request.basic_auth('opsman', '')
-    post_data = URI.encode_www_form('grant_type' => 'password', 'username' => @om_username, 'password' => @om_password)
-    response = http.request(request, post_data)
+    response = http.request(request, URI.encode_www_form('grant_type' => 'password', 'username' => @om_username, 'password' => @om_password))
     case response
     when Net::HTTPSuccess then
-      decoded = JSON.parse(response.body)
-      @access_token = decoded['access_token']
+      @access_token = JSON.parse(response.body)['access_token']
     else
       raise('Error auth: ', response.value)
     end

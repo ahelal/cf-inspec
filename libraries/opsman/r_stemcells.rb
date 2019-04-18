@@ -1,6 +1,4 @@
 
-require 'pp'
-
 class OmStemcellsJob < Inspec.resource(1)
   name 'om_assigned_stemcells'
   desc ''
