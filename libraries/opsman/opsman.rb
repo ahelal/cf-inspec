@@ -15,7 +15,7 @@ class Opsman
     @om_target = ENV['OM_TARGET'] || raise('no OM_TARGET defined in environment')
     @om_username = ENV['OM_USERNAME']
     @om_password = ENV['OM_PASSWORD']
-    @om_ssl_validation = ENV['OM_SKIP_SSL_VALIDATION'] || 'true'
+    @om_ssl_validation = ENV['OM_SKIP_SSL_VALIDATION'] || 'false'
     @access_token = ''
     auth if @om_username && @om_password
     @cache = RequestCache.new
@@ -54,7 +54,7 @@ class Opsman
 
     headers['Accept'] = 'application/json'
     headers['Authorization'] = "Bearer #{@access_token}" unless @access_token.empty?
-    case response = construct_http_client(@om_target.to_s, false).get(path.to_s, headers)
+    case response = construct_http_client(@om_target.to_s).get(path.to_s, headers)
     when Net::HTTPSuccess then
       @cache.write_cache(cache_id, response.body)
       JSON.parse(response.body)
@@ -65,30 +65,24 @@ class Opsman
 
   private
 
-  def construct_http_client(uri_string, user = false)
+  def construct_http_client(uri_string)
     uri = URI.parse(uri_string)
-    uri.user = user if user # might not be needed
     http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
+    http.use_ssl = uri.scheme == 'https'
     http.verify_mode = if @om_ssl_validation
-                         OpenSSL::SSL::VERIFY_PEER
-                       else
                          OpenSSL::SSL::VERIFY_NONE
+                       else
+                         OpenSSL::SSL::VERIFY_PEER
                        end
-
     http
   end
 
   def auth
-    http = construct_http_client(@om_target.to_s, 'opsman')
-
+    http = construct_http_client(@om_target.to_s)
     request = Net::HTTP::Post.new('/uaa/oauth/token')
-    request.add_field('Content-Type', 'application/json')
     request.basic_auth('opsman', '')
     post_data = URI.encode_www_form('grant_type' => 'password', 'username' => @om_username, 'password' => @om_password)
     response = http.request(request, post_data)
-
-    # case response = requst.post_form('grant_type' => 'password', 'username' => @om_username, 'password' => @om_password)
     case response
     when Net::HTTPSuccess then
       decoded = JSON.parse(response.body)
