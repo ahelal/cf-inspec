@@ -12,8 +12,7 @@ class OmInstallation < Inspec.resource(1)
     @params = {}
     begin
       @opsman = Opsman.new
-      installations = get_installations
-    
+      @installations = get_installations
     rescue => e
       raise Inspec::Exceptions::ResourceSkipped, "OM API error: #{e}"
     end
@@ -23,8 +22,18 @@ class OmInstallation < Inspec.resource(1)
     last_run["status"]
   end
 
-  def duration_of_last_run
-    last_run["status"]
+  def status_of_last_completed_run
+    last_completed_run["status"]
+  end
+
+  # {"user_name"=>"admin", "finished_at"=>"2019-04-18T14:02:44.410Z", 
+                      #     "started_at"=>"2019-04-18T14:02:24.033Z", "status"=>"failed", "additions"=>[{"identifier"=>"p-bosh", "label"=>"BOSH Director", "product_version"=>"2.2-build.427", "deployment_status"=>"failed", "change_type"=>"addition", "guid"=>"p-bosh-cd338b266fae39920444"}], "deletions"=>[], "updates"=>[], "unchanged"=>[], "id"=>3}
+
+  def duration_of_last_completed_run
+    run = last_completed_run
+    start = DateTime.parse(run["started_at"])
+    stop = DateTime.parse(run["finished_at"])
+    ((stop - start) * 24 * 60).to_i 
   end
 
   def method_missing(*keys)
@@ -44,17 +53,17 @@ class OmInstallation < Inspec.resource(1)
 
   def get_installations
     obj = @opsman.get('/api/v0/installations', 'Accept' => 'application/json')
-    return obj['installations']
+    raise "Opsman has no installations." if obj['installations'].empty?
+    obj['installations'] 
   end
 
-
   def last_run
-    installations[0]
+    @installations[0]
   end
 
   def last_completed_run
-    installations.each do |installation|
-      return installation if ['successful', 'failed'].include(installation['status'])
+    @installations.each do |installation|
+      return installation if ['successful', 'failed'].include? installation['status']
     end
   end
 

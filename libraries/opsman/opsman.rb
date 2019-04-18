@@ -9,6 +9,7 @@ require 'opsman/r_info'
 require 'opsman/r_product_properties'
 require 'opsman/r_resource_job'
 require 'opsman/r_stemcells'
+require 'opsman/r_installations'
 
 class Opsman
   def initialize
