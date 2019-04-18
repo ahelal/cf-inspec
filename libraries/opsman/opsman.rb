@@ -1,6 +1,7 @@
 require 'net/http'
 require 'openssl'
 require 'json'
+require 'opsman/api_cache'
 require 'base64'
 require 'opsman/r_deployed_product'
 require 'opsman/r_director_properties'
@@ -15,11 +16,9 @@ class Opsman
     @om_username = ENV['OM_USERNAME']
     @om_password = ENV['OM_PASSWORD']
     @om_ssl_validation = ENV['OM_SKIP_SSL_VALIDATION'] || 'true'
-    @cache_time = ENV['INSPEC_CACHE_TIME'] || ''
-    @cache_dir = ENV['INSPEC_CACHE_DIR'] || "#{ENV['HOME']}/.inspec_cache"
-    cache_setup
     @access_token = ''
     auth if @om_username && @om_password
+    @cache = RequestCache.new
   end
 
   def products(product_type)
@@ -50,55 +49,52 @@ class Opsman
 
   def get(path, headers = {})
     cache_id = Base64.encode64(@om_target.to_s + path)
-    cache = get_cache(cache_id)
-    return cache if cache
-    uri = URI.parse(@om_target.to_s)
-    request = Net::HTTP.new(uri.host, uri.port)
-    request.use_ssl = true
-    request.verify_mode = OpenSSL::SSL::VERIFY_PEER
+    cache_result = @cache.get_cache(cache_id)
+    return cache_result if cache_result
+
+    headers['Accept'] = 'application/json'
     headers['Authorization'] = "Bearer #{@access_token}" unless @access_token.empty?
-    case response = request.get(path.to_s, headers)
+    case response = construct_http_client(@om_target.to_s, false).get(path.to_s, headers)
     when Net::HTTPSuccess then
-      write_cache(cache_id, response.body)
+      @cache.write_cache(cache_id, response.body)
       JSON.parse(response.body)
     else
-      raise(response.value)
+      raise("Get request failed #{path}", response.value)
     end
   end
 
   private
 
-  def auth
-    uri = URI.parse(@om_target.to_s)
-    uri.path = '/uaa/oauth/token'
-    uri.user = 'opsman'
+  def construct_http_client(uri_string, user = false)
+    uri = URI.parse(uri_string)
+    uri.user = user if user # might not be needed
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    http.verify_mode = if @om_ssl_validation
+                         OpenSSL::SSL::VERIFY_PEER
+                       else
+                         OpenSSL::SSL::VERIFY_NONE
+                       end
 
-    case response = Net::HTTP.post_form(uri, 'grant_type' => 'password', 'username' => @om_username, 'password' => @om_password)
+    http
+  end
+
+  def auth
+    http = construct_http_client(@om_target.to_s, 'opsman')
+
+    request = Net::HTTP::Post.new('/uaa/oauth/token')
+    request.add_field('Content-Type', 'application/json')
+    request.basic_auth('opsman', '')
+    post_data = URI.encode_www_form('grant_type' => 'password', 'username' => @om_username, 'password' => @om_password)
+    response = http.request(request, post_data)
+
+    # case response = requst.post_form('grant_type' => 'password', 'username' => @om_username, 'password' => @om_password)
+    case response
     when Net::HTTPSuccess then
       decoded = JSON.parse(response.body)
       @access_token = decoded['access_token']
     else
-      raise(response.value)
+      raise('Error auth: ', response.value)
     end
-  end
-
-  def cache_setup
-    Dir.mkdir @cache_dir unless @cache_time.empty? || File.exist?(@cache_dir)
-  end
-
-  def get_cache(id)
-    return false if @cache_time.empty?
-    cache_file_path = "#{@cache_dir}/#{id}.json"
-    return false unless File.file?(cache_file_path)
-    diff_seconds = (Time.new - File.stat(cache_file_path).ctime).to_i
-    return false if diff_seconds > @cache_time.to_i
-    f = File.open(cache_file_path)
-    JSON.parse(f.read)
-  end
-
-  def write_cache(id, contet)
-    return false if @cache_time.empty?
-    cache_file_path = "#{@cache_dir}/#{id}.json"
-    File.write(cache_file_path, contet)
   end
 end
