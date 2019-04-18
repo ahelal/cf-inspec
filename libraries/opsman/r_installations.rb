@@ -1,14 +1,8 @@
 require 'pp'
 
-class OmInfo < Inspec.resource(1)
-  name 'om_info'
-  desc 'Verify info about om'
-
-  example "
-    describe bosh_info do
-      its('version') { should match /2.3/ }
-    end
-  "
+class OmInstallation < Inspec.resource(1)
+  name 'om_installations'
+  desc 'Verify installation data'
 
   include ObjectTraverser
 
@@ -18,14 +12,19 @@ class OmInfo < Inspec.resource(1)
     @params = {}
     begin
       @opsman = Opsman.new
+      installations = get_installations
+    
     rescue => e
       raise Inspec::Exceptions::ResourceSkipped, "OM API error: #{e}"
     end
   end
 
-  def version
-    obj = @opsman.get('/api/v0/info', 'Accept' => 'application/json')
-    obj['info']['version']
+  def status_of_last_run
+    last_run["status"]
+  end
+
+  def duration_of_last_run
+    last_run["status"]
   end
 
   def method_missing(*keys)
@@ -40,4 +39,25 @@ class OmInfo < Inspec.resource(1)
     # which may be an Array of keys for a nested Hash.
     extract_value(key, params)
   end
- end
+
+  private
+
+  def get_installations
+    obj = @opsman.get('/api/v0/installations', 'Accept' => 'application/json')
+    return obj['installations']
+  end
+
+
+  def last_run
+    installations[0]
+  end
+
+  def last_completed_run
+    installations.each do |installation|
+      return installation if ['successful', 'failed'].include(installation['status'])
+    end
+  end
+
+end
+
+
