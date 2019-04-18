@@ -39,5 +39,5 @@ class OmInfo < Inspec.resource(1)
     # uses ObjectTraverser.extract_value to walk the hash looking for the key,
     # which may be an Array of keys for a nested Hash.
     extract_value(key, params)
-   end
   end
+ end
