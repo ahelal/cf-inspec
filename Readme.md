@@ -1,6 +1,6 @@
-# inspec Opsman/bosh resource(s)
+# inspec Cloudfoundry resource(s)
 
-This InSpec resource pack that provides the required resources to write tests for Opsman & bosh.
+This InSpec resource pack that provides the required resources to write tests for cloudfoundry.
 
 ## Prerequisites
 
@@ -16,8 +16,8 @@ name: my-profile
 title: test
 version: 0.1.0
 depends:
-  - name: inspec-bosh
-    url: https://github.com/ahelal/inspec-bosh/archive/master.tar.gz
+  - name: cf-inspec
+    url: https://github.com/ahelal/cf-inspec/archive/master.tar.gz
 ```
 
 2. Edit inspec.yml to reflect the depends
@@ -58,27 +58,23 @@ Add the following task to your pipeline and map the location of your tests to th
 ```yaml
 ---
 resources:
-- name: bosh-inspec
+- name: cf-inspec
   type: git
   source:
-    uri: https://github.com/ahelal/bosh-inspec.git
+    uri: https://github.com/ahelal/cf-inspec.git
     branch: master
 
 jobs:
 - name: run-inspec
   plan:
-  - get: bosh-inspec
+  - get: cf-inspec
   - task: run-inspec
-    file: bosh-inspec/task/task.yml
+    file: cf-inspec/task/task.yml
     input_mapping:
-      tests: bosh-inspec
+      tests: cf-inspec
     params:
       OM_TARGET: ((OM_TARGET))
       OM_USERNAME: ((OM_USERNAME))
       OM_PASSWORD: ((OM_PASSWORD))
       TESTS_PATH: test/example
 ```
-
-### Improvements
-
-* Cache API results

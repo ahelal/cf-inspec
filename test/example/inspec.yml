@@ -9,5 +9,5 @@ version: 0.1.0
 supports:
   platform: os
 depends:
-  - name: inspec-bosh
+  - name: cf-inspec
     path: ../../

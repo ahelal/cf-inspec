@@ -1,5 +1,5 @@
-name: inspec-bosh
-title: Bosh inspec resource
-summary: This resource pack provides compliance for Bosh
+name: cf-inspec
+title: Cloudfoundry inspec resources
+summary: This resource pack provides compliance for Cloudfoundry
 version: 0.0.1
 license: BSD V3

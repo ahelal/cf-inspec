@@ -1,19 +1,19 @@
 ---
 resources:
-- name: bosh-inspec
+- name: cf-inspec
   type: git
   source:
-    uri: https://github.com/ahelal/bosh-inspec.git
+    uri: https://github.com/ahelal/cf-inspec.git
     branch: origin/task
 
 jobs:
 - name: run-inspec
   plan:
-  - get: bosh-inspec
+  - get: cf-inspec
   - task: run-inspec
-    file: bosh-inspec/task/task.yml
+    file: cf-inspec/task/task.yml
     input_mapping:
-      tests: bosh-inspec
+      tests: cf-inspec
     params:
       OM_TARGET: ((OM_TARGET))
       OM_USERNAME: ((OM_USERNAME))
