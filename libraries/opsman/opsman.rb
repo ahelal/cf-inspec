@@ -10,6 +10,9 @@ require 'opsman/r_product_properties'
 require 'opsman/r_resource_job'
 require 'opsman/r_stemcells'
 require 'opsman/r_installations'
+require 'opsman/r_info'
+require 'opsman/r_certificates'
+require 'opsman/r_vm_extensions'
 
 class Opsman
   def initialize
@@ -18,12 +21,11 @@ class Opsman
     @om_password = ENV['OM_PASSWORD']
     @om_ssl_validation = ENV['OM_SKIP_SSL_VALIDATION'] || 'false'
     @access_token = ''
-    auth if @om_username && @om_password
     @cache = RequestCache.new
   end
 
   def products(product_type)
-    products = get('/api/v0/deployed/products', 'Accept' => 'application/json')
+    products = get('/api/v0/deployed/products')
     product_list = []
     products.each do |product|
       return product if product['type'] == product_type
@@ -39,7 +41,7 @@ class Opsman
   end
 
   def job_guid(product_guid, job_name)
-    jobs = get("/api/v0/staged/products/#{product_guid}/jobs", 'Accept' => 'application/json')
+    jobs = get("/api/v0/staged/products/#{product_guid}/jobs")
     jobs_list = []
     jobs['jobs'].each do |job|
       return job['guid'] if job['name'] == job_name
@@ -49,19 +51,15 @@ class Opsman
   end
 
   def get(path, headers = {})
-    cache_id = Base64.encode64(@om_target.to_s + path)
-    cache_result = @cache.get_cache(cache_id)
+    cache_result = @cache.get_cache(Base64.encode64(@om_target.to_s + path))
     return cache_result if cache_result
-
-    headers['Accept'] = 'application/json'
-    headers['Authorization'] = "Bearer #{@access_token}" unless @access_token.empty?
-    case response = construct_http_client(@om_target.to_s).get(path.to_s, headers)
+    auth if @om_username && @om_password
+    case response = construct_http_client(@om_target.to_s).get(path.to_s, construct_get_headers(headers))
     when Net::HTTPSuccess then
-      @cache.write_cache(cache_id, response.body)
-      JSON.parse(response.body)
-    else
-      raise("Get request failed #{path}", response.value)
+      @cache.write_cache(Base64.encode64(@om_target.to_s + path), response.body)
+      return JSON.parse(response.body)
     end
+    raise "Get request failed #{path}. #{response.value}"
   end
 
   private
@@ -78,6 +76,12 @@ class Opsman
     http
   end
 
+  def construct_get_headers(headers)
+    headers[:Accept] = 'application/json'
+    headers[:Authorization] = "Bearer #{@access_token}" unless @access_token.empty?
+    headers
+  end
+
   def auth
     http = construct_http_client(@om_target.to_s)
     request = Net::HTTP::Post.new('/uaa/oauth/token')
@@ -86,8 +90,8 @@ class Opsman
     case response
     when Net::HTTPSuccess then
       @access_token = JSON.parse(response.body)['access_token']
-    else
-      raise('Error auth: ', response.value)
+      return
     end
+    raise "Authentication request failed. #{response.value}"
   end
 end

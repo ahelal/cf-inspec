@@ -3,7 +3,7 @@
 control 'OM Deployed product PAS' do
   title 'should be deployed'
   describe om_deployed_product('cf') do
-    its('version') { should match(/2.3.8/) }
+    its('version') { should match(/2.3.9/) }
   end
 end
 

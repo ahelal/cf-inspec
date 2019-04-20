@@ -1,33 +1,33 @@
 
-class OmDirectorProperties < Inspec.resource(1)
-  name 'om_director_properties'
-  desc ''
+class VMExtensions < Inspec.resource(1)
+  name 'om_vm_extensions'
+  desc 'Verify info about vm_extensions'
 
   example "
-  describe om_director_properties do
-    its(%w[iaas_configuration encrypted]) { should eq true }
-    its(%w[director_configuration ntp_servers_string]) { should eq 'us.pool.ntp.org, time.google.com' }
-    its(%w[iaas_configuration tls_enabled]) { should eq true }
-    its(%w[syslog_configuration enabled]) { should eq true }
-  end
+
   "
 
   include ObjectTraverser
 
   attr_reader :params, :raw_content
 
-  def initialize
+  def initialize(extention_name = false)
     @params = {}
     begin
       @opsman = Opsman.new
-      @params = director_properties
+      @extention_name = extention_name
     rescue => e
       raise Inspec::Exceptions::ResourceSkipped, "OM API error: #{e}"
     end
   end
 
-  def director_properties
-    @opsman.get('/api/v0/staged/director/properties')
+  def extentions
+    exts = all_extentions
+    return exts unless @extention_name
+
+    exts.each do |ext|
+      return ext if ext['name'] == @extention_name
+    end
   end
 
   def method_missing(*keys)
@@ -41,5 +41,12 @@ class OmDirectorProperties < Inspec.resource(1)
     # uses ObjectTraverser.extract_value to walk the hash looking for the key,
     # which may be an Array of keys for a nested Hash.
     extract_value(key, params)
+  end
+
+  private
+
+  def all_extentions
+    obj = @opsman.get('/api/v0/deployed/vm_extensions')
+    obj['vm_extensions']
   end
 end

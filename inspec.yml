@@ -1,5 +1,7 @@
 name: cf-inspec
 title: Cloudfoundry inspec resources
 summary: This resource pack provides compliance for Cloudfoundry
+maintainer: Adham Abdelwahab
+copyright: Adham Abdelwahab
 version: 0.0.1
 license: BSD V3

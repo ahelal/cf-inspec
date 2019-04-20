@@ -27,7 +27,7 @@ class OmProductProperties < Inspec.resource(1)
   def product_properties
     guid = @opsman.product_guid(@product_type)
     return nil if guid.nil?
-    @opsman.get("/api/v0/staged/products/#{guid}/properties", 'Accept' => 'application/json')
+    @opsman.get("/api/v0/staged/products/#{guid}/properties")
   end
 
   def method_missing(*keys)

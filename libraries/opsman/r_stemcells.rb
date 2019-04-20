@@ -21,22 +21,27 @@ class OmStemcellsJob < Inspec.resource(1)
     begin
       @opsman = Opsman.new
       @product_type = product_type
-      @params = product_stemcell
+      @params = if @product_type.nil?
+                  all_products_assignments
+                else
+                  single_product_assignment
+                end
     rescue => e
       raise Inspec::Exceptions::ResourceSkipped, "OM API error: #{e}"
     end
   end
 
-  def product_stemcell
-    stemcell_assignments = @opsman.get('/api/v0/stemcell_assignments', 'Accept' => 'application/json')
-    stemcell_assignments = stemcell_assignments['products']
-
-    if @product_type.nil?
-      stemcell_list = []
-      stemcell_assignments.each { |stemcell_assignment| stemcell_list.push(stemcell_assignment['staged_stemcell_version']) }
-      return { 'versions' => stemcell_list }
+  def all_products_assignments
+    stemcell_assignments = assignments
+    stemcell_list = []
+    stemcell_assignments.each do |stemcell_assignment|
+      stemcell_list.push(stemcell_assignment['staged_stemcell_version'])
     end
+    { 'versions' => stemcell_list }
+  end
 
+  def single_product_assignment
+    stemcell_assignments = assignments
     p_guid = @opsman.product_guid(@product_type)
     stemcell_assignments.each do |stemcell_assignment|
       return { 'version' => stemcell_assignment['staged_stemcell_version'] } if stemcell_assignment['guid'] == p_guid
@@ -55,5 +60,12 @@ class OmStemcellsJob < Inspec.resource(1)
     # uses ObjectTraverser.extract_value to walk the hash looking for the key,
     # which may be an Array of keys for a nested Hash.
     extract_value(key, params)
+  end
+
+  private
+
+  def assignments
+    stemcell_assignments = @opsman.get('/api/v0/stemcell_assignments')
+    stemcell_assignments['products']
   end
 end

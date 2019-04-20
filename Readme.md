@@ -1,10 +1,10 @@
-# inspec Cloudfoundry resource(s)
+# inSpec Cloudfoundry resources
 
 This InSpec resource pack that provides the required resources to write tests for cloudfoundry.
 
 ## Prerequisites
 
-You need [inspec](https://www.inspec.io/downloads/) :)
+You need [inSpec](https://www.inspec.io/downloads/) :)
 
 ## Usage
 ### Create a new profile
@@ -48,6 +48,8 @@ If you have many tests API calls might be slow and some tests use same API endpo
 * `om_director_properties` verify director properties
 * `om_assigned_stemcells` verify version(s) of assigned stemcells
 * `om_installations` verify opsman apply changes
+* `om_certificates` verify opsman certificates
+* `om_vm_extensions` verify vm extensions
 
 Check the [examples](test/example/controls)
 

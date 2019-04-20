@@ -3,7 +3,7 @@
 control 'Assigned PAS stemcell' do
   title 'should be pinned'
   describe om_assigned_stemcells('cf') do
-    its('version') { should eq '97.57' }
+    its('version') { should eq '97.74' }
   end
 end
 

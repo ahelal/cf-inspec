@@ -31,7 +31,7 @@ class OmResourceJob < Inspec.resource(1)
     p_guid = @opsman.product_guid(@product_type)
     job_guid = @opsman.job_guid(p_guid, @job_name)
 
-    @opsman.get("/api/v0/staged/products/#{p_guid}/jobs/#{job_guid}/resource_config", 'Accept' => 'application/json')
+    @opsman.get("/api/v0/staged/products/#{p_guid}/jobs/#{job_guid}/resource_config")
   end
 
   def method_missing(*keys)

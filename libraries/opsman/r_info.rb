@@ -23,7 +23,7 @@ class OmInfo < Inspec.resource(1)
   end
 
   def version
-    obj = @opsman.get('/api/v0/info', 'Accept' => 'application/json')
+    obj = @opsman.get('/api/v0/info')
     obj['info']['version']
   end
 

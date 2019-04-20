@@ -2,9 +2,9 @@
 
 class RequestCache
   def initialize
+    @cache_dir = ENV['INSPEC_CACHE_DIR'] || "#{ENV['HOME']}/.inspec_cache"
     @cache_time = ENV['INSPEC_CACHE_TIME'] || ''
     @cache_enabled = !@cache_time.empty?
-    @cache_dir = ENV['INSPEC_CACHE_DIR'] || "#{ENV['HOME']}/.inspec_cache"
     cache_setup
   end
 

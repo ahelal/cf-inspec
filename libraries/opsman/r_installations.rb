@@ -4,8 +4,8 @@ class OmInstallation < Inspec.resource(1)
   desc 'Verify installation data'
   example "
     describe om_installations do
-      its('status_of_last_run') { should eq 'successful' }
-      its('status_of_last_completed_run') { should eq 'successful' }
+      its('status_of_last_run') { should eq 'succeeded' }
+      its('status_of_last_completed_run') { should eq 'succeeded' }
       its('duration_of_last_completed_run') { should be < 60 * 60 }
     end
   "
@@ -54,7 +54,7 @@ class OmInstallation < Inspec.resource(1)
   private
 
   def get_installations
-    obj = @opsman.get('/api/v0/installations', 'Accept' => 'application/json')
+    obj = @opsman.get('/api/v0/installations')
     raise 'Opsman has no installations.' if obj['installations'].empty?
     obj['installations']
   end
@@ -65,7 +65,7 @@ class OmInstallation < Inspec.resource(1)
 
   def last_completed_run
     @installations.each do |installation|
-      return installation if %w[successful failed].include? installation['status']
+      return installation if %w[succeeded failed].include? installation['status']
     end
   end
 end

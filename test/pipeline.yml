@@ -18,4 +18,4 @@ jobs:
       OM_TARGET: ((OM_TARGET))
       OM_USERNAME: ((OM_USERNAME))
       OM_PASSWORD: ((OM_PASSWORD))
-      TESTS_PATH: test/example
+      TESTS_PATH: test/om_example
