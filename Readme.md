@@ -1,4 +1,6 @@
 # inSpec Cloudfoundry resources
+https://travis-ci.org/#
+
 
 This InSpec resource pack that provides the required resources to write tests for cloudfoundry.
 
@@ -51,7 +53,7 @@ If you have many tests API calls might be slow and some tests use same API endpo
 * `om_certificates` verify opsman certificates
 * `om_vm_extensions` verify vm extensions
 
-Check the [examples](test/example/controls)
+Check the [examples](test/examples/om/controls)
 
 ### Running in Concourse
 

@@ -16,6 +16,6 @@ install:
   - bundle install
 
 script:
-    - ./test/run-tests.sh
+    - ./test/run-test.sh
 after_success:
     - echo "Success"
