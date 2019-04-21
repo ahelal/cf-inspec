@@ -1,5 +1,5 @@
 # inSpec Cloudfoundry resources
-https://travis-ci.org/#
+[![Build Status](https://travis-ci.org/ahelal/cf-inspec.svg?branch=master)](https://travis-ci.org/ahelal/cf-inspec)
 
 
 This InSpec resource pack that provides the required resources to write tests for cloudfoundry.
