@@ -21,11 +21,8 @@ class OmStemcellsJob < Inspec.resource(1)
     begin
       @opsman = Opsman.new
       @product_type = product_type
-      @params = if @product_type.nil?
-                  all_products_assignments
-                else
-                  single_product_assignment
-                end
+      @params = all_products_assignments if @product_type.nil?
+      @params = single_product_assignment unless @product_type.nil?
     rescue => e
       raise Inspec::Exceptions::ResourceSkipped, "OM API error: #{e}"
     end

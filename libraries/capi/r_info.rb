@@ -1,11 +1,11 @@
 
-class OmInfo < Inspec.resource(1)
-  name 'om_info'
-  desc 'Verify info about om'
+class CAPIInfo < Inspec.resource(1)
+  name 'capi_info'
+  desc 'Verify info about capi'
 
   example "
-    describe bosh_info do
-      its('version') { should match /2.3/ }
+    describe capi_info do
+      its('version') { should match /2.120/ }
     end
   "
 
@@ -16,15 +16,11 @@ class OmInfo < Inspec.resource(1)
   def initialize(_path = nil)
     @params = {}
     begin
-      @opsman = Opsman.new
+      @capi = CAPI.new
+      @params = @capi.info
     rescue => e
       raise Inspec::Exceptions::ResourceSkipped, "OM API error: #{e}"
     end
-  end
-
-  def version
-    obj = @opsman.get('/api/v0/info')
-    obj['info']['version']
   end
 
   def method_missing(*keys)

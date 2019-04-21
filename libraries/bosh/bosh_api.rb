@@ -11,7 +11,7 @@ class BoshClient
   end
 
   def info
-    response = get('/info', 'Accept' => 'application/json')
+    response = get('/info')
     JSON.parse(response.body)
   end
 

@@ -60,23 +60,30 @@ Add the following task to your pipeline and map the location of your tests to th
 ```yaml
 ---
 resources:
-- name: cf-inspec
+- name: cf-inspec-tasks
   type: git
   source:
     uri: https://github.com/ahelal/cf-inspec.git
     branch: master
 
+- name: source-code
+  type: git
+  source:
+    uri: https://github.com/<ORG>/<CODE>
+    branch: master
+
 jobs:
 - name: run-inspec
   plan:
-  - get: cf-inspec
+  - get: cf-inspec-tasks
+  - get: source-code
   - task: run-inspec
-    file: cf-inspec/task/task.yml
+    file: cf-inspec-tasks/task/task.yml
     input_mapping:
-      tests: cf-inspec
+      tests: source-code
     params:
       OM_TARGET: ((OM_TARGET))
       OM_USERNAME: ((OM_USERNAME))
       OM_PASSWORD: ((OM_PASSWORD))
-      TESTS_PATH: test/example
+      TESTS_PATH: tests
 ```

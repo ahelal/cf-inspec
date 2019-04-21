@@ -1,10 +1,9 @@
 
-
 class RequestCache
   def initialize
     @cache_dir = ENV['INSPEC_CACHE_DIR'] || "#{ENV['HOME']}/.inspec_cache"
-    @cache_time = ENV['INSPEC_CACHE_TIME'] || ''
-    @cache_enabled = !@cache_time.empty?
+    @cache_time = ENV['INSPEC_CACHE_TIME'] || '0'
+    @cache_enabled = @cache_time.to_i > 0
     cache_setup
   end
 
@@ -21,6 +20,7 @@ class RequestCache
     return false unless @cache_enabled
     cache_file_path = "#{@cache_dir}/#{id}.json"
     File.write(cache_file_path, contet)
+    true
   end
 
   private

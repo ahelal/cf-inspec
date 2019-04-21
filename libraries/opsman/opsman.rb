@@ -1,7 +1,6 @@
 require 'net/http'
 require 'openssl'
 require 'json'
-require 'opsman/api_cache'
 require 'base64'
 require 'opsman/r_deployed_product'
 require 'opsman/r_director_properties'
@@ -53,7 +52,9 @@ class Opsman
   def get(path, headers = {})
     cache_result = @cache.get_cache(Base64.encode64(@om_target.to_s + path))
     return cache_result if cache_result
-    auth if @om_username && @om_password
+    auth
+
+    response = construct_http_client(@om_target.to_s).get(path.to_s, construct_get_headers(headers))
     case response = construct_http_client(@om_target.to_s).get(path.to_s, construct_get_headers(headers))
     when Net::HTTPSuccess then
       @cache.write_cache(Base64.encode64(@om_target.to_s + path), response.body)
@@ -83,6 +84,7 @@ class Opsman
   end
 
   def auth
+    return false unless @om_username && @om_password
     http = construct_http_client(@om_target.to_s)
     request = Net::HTTP::Post.new('/uaa/oauth/token')
     request.basic_auth('opsman', '')

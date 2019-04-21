@@ -17,7 +17,7 @@ class OmInstallation < Inspec.resource(1)
     @params = {}
     begin
       @opsman = Opsman.new
-      @installations = get_installations
+      @installations = fetch_installations
     rescue => e
       raise Inspec::Exceptions::ResourceSkipped, "OM API error: #{e}"
     end
@@ -53,7 +53,7 @@ class OmInstallation < Inspec.resource(1)
 
   private
 
-  def get_installations
+  def fetch_installations
     obj = @opsman.get('/api/v0/installations')
     raise 'Opsman has no installations.' if obj['installations'].empty?
     obj['installations']

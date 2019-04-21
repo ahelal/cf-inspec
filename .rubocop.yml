@@ -2,3 +2,5 @@ Metrics/LineLength:
   Max: 180
 Documentation:
   Enabled: false
+Style/MethodMissing:
+  Enabled: false
