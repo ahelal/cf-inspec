@@ -16,16 +16,16 @@ class CAPI
     @info = get('/v2/info', {}, false)
   end
 
-  def get(path, headers = {}, auth = true)
-    cache_result = @cache.get_cache(Base64.encode64(@cf_target.to_s + path))
+  def get(path, headers = {}, do_auth = true)
+    id = @cache.encode(@om_target, path, headers)
+    cache_result = @cache.get_cache(id)
     return cache_result if cache_result
-    auth if @cf_username && @cf_password && auth
-    case response = construct_http_client(@cf_target.to_s).get(path.to_s, construct_get_headers(headers))
-    when Net::HTTPSuccess then
-      @cache.write_cache(Base64.encode64(@cf_target.to_s + path), response.body)
-      return JSON.parse(response.body)
-    end
-    raise "Get request failed #{path}. #{response.value}"
+    auth if do_auth
+    request = construct_http_client(@om_target)
+    headers =  construct_get_headers(headers)
+    response = request.get(path.to_s, headers)
+    @cache.write_cache(id, response.body)
+    JSON.parse(response.body)
   end
 
   private

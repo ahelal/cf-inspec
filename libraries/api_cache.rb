@@ -7,6 +7,11 @@ class RequestCache
     cache_setup
   end
 
+  def encode(_url, path, headers)
+    k = headers.to_s
+    Base64.encode64(@om_target.to_s + path + k)
+  end
+
   def get_cache(id)
     return false unless @cache_enabled
     cache_file_path, cache_exist = check_cache_file(id)

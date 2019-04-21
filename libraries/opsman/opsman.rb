@@ -50,17 +50,15 @@ class Opsman
   end
 
   def get(path, headers = {})
-    cache_result = @cache.get_cache(Base64.encode64(@om_target.to_s + path))
+    id = @cache.encode(@om_target, path, headers)
+    cache_result = @cache.get_cache(id)
     return cache_result if cache_result
     auth
-
-    response = construct_http_client(@om_target.to_s).get(path.to_s, construct_get_headers(headers))
-    case response = construct_http_client(@om_target.to_s).get(path.to_s, construct_get_headers(headers))
-    when Net::HTTPSuccess then
-      @cache.write_cache(Base64.encode64(@om_target.to_s + path), response.body)
-      return JSON.parse(response.body)
-    end
-    raise "Get request failed #{path}. #{response.value}"
+    request = construct_http_client(@om_target)
+    headers =  construct_get_headers(headers)
+    response = request.get(path.to_s, headers)
+    @cache.write_cache(id, response.body)
+    JSON.parse(response.body)
   end
 
   private
@@ -88,12 +86,11 @@ class Opsman
     http = construct_http_client(@om_target.to_s)
     request = Net::HTTP::Post.new('/uaa/oauth/token')
     request.basic_auth('opsman', '')
-    response = http.request(request, URI.encode_www_form('grant_type' => 'password', 'username' => @om_username, 'password' => @om_password))
-    case response
-    when Net::HTTPSuccess then
-      @access_token = JSON.parse(response.body)['access_token']
-      return
+    form = URI.encode_www_form('grant_type' => 'password', 'username' => @om_username, 'password' => @om_password)
+    case response = http.request(request, form)
+    when !Net::HTTPSuccess then
+      raise "Authentication request failed. #{response.value}"
     end
-    raise "Authentication request failed. #{response.value}"
+    @access_token = JSON.parse(response.body)['access_token']
   end
 end
