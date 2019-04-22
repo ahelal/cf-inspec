@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-control 'Check opsman' do
+control 'Check CAPI' do
   title 'should be reachable'
   describe capi_info do
     its('api_version') { should match(/2.*/) }

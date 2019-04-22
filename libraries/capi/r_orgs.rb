@@ -1,10 +1,10 @@
 
-class CAPIInfo < Inspec.resource(1)
-  name 'capi_info'
-  desc 'Verify info about capi'
+class CAPIOrgs < Inspec.resource(1)
+  name 'capi_orgs'
+  desc 'Verify orgs about capi'
 
   example "
-    describe capi_info do
+    describe capi_orgs do
       its('version') { should match /2.120/ }
     end
   "
@@ -13,14 +13,24 @@ class CAPIInfo < Inspec.resource(1)
 
   attr_reader :params, :raw_content
 
-  def initialize(_path = nil)
+  def initialize(org = nil)
     @params = {}
     begin
-      @capi = CAPI.new
-      @params = @capi.info
+      @capi = CAPI.new(true)
+      @selected_org = org
     rescue => e
       raise Inspec::Exceptions::ResourceSkipped, "CAPI error: #{e}"
     end
+  end
+
+  def orgs
+    un_filtered_orgs = @capi.get('/v2/organizations', {}, true)
+    orgs_list = []
+    un_filtered_orgs['resources'].each do |org|
+      orgs_list.push(org['entity']['name'])
+    end
+    puts "org length #{orgs_list.length}"
+    orgs_list
   end
 
   def method_missing(*keys)
