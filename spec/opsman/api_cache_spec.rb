@@ -3,6 +3,7 @@ require 'api_cache'
 
 describe 'cache time is not set' do
   before(:all) do
+    ENV['INSPEC_CACHE_TIME'] = ''
     ENV['INSPEC_CACHE_DIR'] = Dir.tmpdir + '/' + (0...8).map { (65 + rand(26)).chr }.join
     @cache = RequestCache.new
   end

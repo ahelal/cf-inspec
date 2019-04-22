@@ -5,8 +5,10 @@ class OmCertificate < Inspec.resource(1)
   desc ''
 
   example "
+    describe om_certificates('pivotal-mysql') do
       its(%w[active_root_ca issuer]) { should eq 'Pivotal' }
-    its('expires') { should be_empty }
+      its('expires') { should be_empty }
+    end
   "
 
   include ObjectTraverser
