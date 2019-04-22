@@ -35,12 +35,6 @@ You need to export **required** opsman variables
 Optional variables
 * `OM_SKIP_SSL_VALIDATION` defaults to `false`
 
-### API caching
-
-If you have many tests API calls might be slow and some tests use same API endpoints, but will go fetch for every test. You can enable caching to increase test speed.
-* `INSPEC_CACHE_TIME` defaults to `0` seconds
-* `INSPEC_CACHE_DIR` defaults to `~/.inspec_cache`
-
 ### Available resources
 
 * `om_info` Opsman version
@@ -52,6 +46,9 @@ If you have many tests API calls might be slow and some tests use same API endpo
 * `om_installations` verify opsman apply changes
 * `om_certificates` verify opsman certificates
 * `om_vm_extensions` verify vm extensions
+
+
+#### Examples
 
 Check the [examples](test/examples/om/controls)
 
@@ -89,3 +86,9 @@ jobs:
       OM_PASSWORD: ((OM_PASSWORD))
       TESTS_PATH: tests
 ```
+
+### API caching
+
+If you have many tests API calls might be slow. You can enable caching to increase test speed.
+* `INSPEC_CACHE_TIME` defaults to `0` seconds
+* `INSPEC_CACHE_DIR` defaults to `~/.inspec_cache`
