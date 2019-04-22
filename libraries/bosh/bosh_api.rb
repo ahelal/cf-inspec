@@ -2,12 +2,19 @@ require 'net/http'
 require 'openssl'
 require 'json'
 
-class BoshClient
+def parse_bosh_proxy
+  return false if ENV['BOSH_ALL_PROXY'].empty?
+  match_reg = %r{ssh\+socks5:\/\/+(?<user>[0-9a-zA-Z._-]*)\@(?<host>[0-9a-zA-Z._-]*)\:(?<port>[0-9]*)\?private-key=(?<key>[0-9a-zS-Z\/._-]*)}
+  ENV['BOSH_ALL_PROXY'].match(match_reg)
+end
+
+class BoshAPI
   def initialize
     @bosh_client = ENV['BOSH_CLIENT'] || raise('no BOSH_CLIENT defined')
     @bosh_client_secret = ENV['BOSH_CLIENT_SECRET'] || raise('no BOSH_CLIENT_SECRET defined')
     @bosh_environment = ENV['BOSH_ENVIRONMENT'] || raise('no BOSH_ENVIRONMENT defined')
     @bosh_ca_cert = ENV['BOSH_CA_CERT'] || raise('no BOSH_CA_CERT defined')
+    @bosh_proxy = parse_bosh_proxy
   end
 
   def info

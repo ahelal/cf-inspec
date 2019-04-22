@@ -3,6 +3,7 @@ require 'openssl'
 require 'json'
 require 'base64'
 require 'capi/r_info'
+require 'capi/r_orgs'
 
 class CAPI
   attr_reader :info
@@ -16,19 +17,35 @@ class CAPI
     @info = get('/v2/info', {}, false)
   end
 
-  def get(path, headers = {}, do_auth = true)
-    id = @cache.encode(@om_target, path, headers)
+  def get(path, headers = {}, do_auth = true, uri = @cf_target)
+    id = @cache.encode(@cf_target, path, headers)
     cache_result = @cache.get_cache(id)
     return cache_result if cache_result
     auth if do_auth
-    request = construct_http_client(@om_target)
-    headers =  construct_get_headers(headers)
-    response = request.get(path.to_s, headers)
-    @cache.write_cache(id, response.body)
-    JSON.parse(response.body)
+    request = construct_http_client(uri)
+    headers = construct_get_headers(headers)
+    response = next_page(request, path, headers)
+    @cache.write_cache(id, response.to_json)
+    response
   end
 
   private
+
+  def next_page(request, path, headers)
+    content = simple_get(request, path, headers)
+    until content['next_url'].nil?
+      new_content = simple_get(request, content['next_url'], headers)
+      new_content['resources'] = new_content['resources'].concat(content['resources'])
+      content = new_content
+    end
+    content
+  end
+
+  def simple_get(request, path, headers)
+    response = request.get(path.to_s, headers)
+    raise "get request failed. #{response.value}" unless response.is_a? Net::HTTPSuccess
+    JSON.parse(response.body)
+  end
 
   def construct_http_client(uri_string)
     uri = URI.parse(uri_string)
@@ -48,16 +65,20 @@ class CAPI
     headers
   end
 
+  def auth_url
+    login_url = get('/login', {}, false, @info['authorization_endpoint'])
+    login_url['links']['login']
+  end
+
   def auth
-    http = construct_http_client(@cf_target.to_s)
-    request = Net::HTTP::Post.new('/uaa/oauth/token')
-    request.basic_auth('opsman', '')
-    response = http.request(request, URI.encode_www_form('grant_type' => 'password', 'username' => @cf_username, 'password' => @cf_password))
-    case response
-    when Net::HTTPSuccess then
-      @access_token = JSON.parse(response.body)['access_token']
-      return
-    end
-    raise "Authentication request failed. #{response.value}"
+    return false unless @cf_username && @cf_password
+    http = construct_http_client(auth_url)
+    request = Net::HTTP::Post.new('/oauth/token')
+    request.basic_auth('cf', '')
+    form = URI.encode_www_form('grant_type' => 'password', 'username' => @cf_username, 'password' => @cf_password)
+    response = http.request(request, form)
+    raise "Authentication request failed. #{response.value}" unless response.is_a? Net::HTTPSuccess
+    body = JSON.parse(response.body)
+    @access_token = body['access_token']
   end
 end
