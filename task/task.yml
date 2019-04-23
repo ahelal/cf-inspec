@@ -24,4 +24,4 @@ run:
   - |
     set -e
     echo "Running tests ..."
-    inspec exec specs/${SPECS_SUBDIR}
+    inspec --no-color exec specs/${SPECS_SUBDIR}
