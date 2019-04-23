@@ -1,15 +1,11 @@
 # encoding: utf-8
 
-control 'OM Deployed product PAS' do
-  title 'should be deployed'
-  describe om_deployed_product('cf') do
-    its('version') { should match(/2.3.9/) }
+control 'OM Deployed products' do
+  describe om_deployed_products do
+    its(['cf', 'product_version']) { should eq '2.3.9' }
   end
-end
 
-control 'OM Deployed product Pivotal mysql' do
-  title 'should be deployed'
   describe om_deployed_product('pivotal-mysql') do
-    its('version') { should match(/2.4.4/) }
+    its('pivotal-mysql') { should include('product_version' => match(/2.4.4/)) }
   end
 end
