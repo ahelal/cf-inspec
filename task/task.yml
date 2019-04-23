@@ -18,8 +18,7 @@ params:
   SPECS_SUBDIR: .
 
 run:
-  path: inspec
+  path: /bin/sh
   args:
-  - exec
-  - --no-color
-  - specs/${SPECS_SUBDIR}
+  - -c
+  - "inspec exec --no-color specs/${SPECS_SUBDIR}"
