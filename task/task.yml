@@ -18,10 +18,8 @@ params:
   SPECS_SUBDIR: .
 
 run:
-  path: /bin/sh
+  path: inspec
   args:
-  - -exc
-  - |
-    set -e
-    echo "Running tests ..."
-    inspec --no-color exec specs/${SPECS_SUBDIR}
+  - exec
+  - --no-color
+  - specs/${SPECS_SUBDIR}
