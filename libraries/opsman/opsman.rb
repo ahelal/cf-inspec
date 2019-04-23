@@ -23,16 +23,6 @@ class Opsman
     @cache = RequestCache.new
   end
 
-  def products(product_type)
-    products = get('/api/v0/deployed/products')
-    product_list = []
-    products.each do |product|
-      return product if product['type'] == product_type
-      product_list.push(product['type'])
-    end
-    raise "error unkown product '#{product_type}' avaiable products are #{product_list}"
-  end
-
   def product_guid(product_type)
     product = products(product_type)
     return product['guid'] unless product.nil?

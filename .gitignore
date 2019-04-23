@@ -1,3 +1,4 @@
 creds.sh
 test/example/inspec.lock
 coverage
+/.idea/

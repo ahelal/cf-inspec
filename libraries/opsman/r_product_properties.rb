@@ -30,6 +30,8 @@ class OmProductProperties < Inspec.resource(1)
     @opsman.get("/api/v0/staged/products/#{guid}/properties")['properties']
   end
 
+  private
+
   def method_missing(*keys)
     # catch bahavior of rspec its implementation
     # @see https://github.com/rspec/rspec-its/blob/master/lib/rspec/its.rb#L110
@@ -41,5 +43,15 @@ class OmProductProperties < Inspec.resource(1)
     # uses ObjectTraverser.extract_value to walk the hash looking for the key,
     # which may be an Array of keys for a nested Hash.
     extract_value(key, params)
+  end
+
+  def products(product_type)
+    products = get('/api/v0/deployed/products')
+    product_list = []
+    products.each do |product|
+      return product if product['type'] == product_type
+      product_list.push(product['type'])
+    end
+    raise "error unkown product '#{product_type}' avaiable products are #{product_list}"
   end
 end
