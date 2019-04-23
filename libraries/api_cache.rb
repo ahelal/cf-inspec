@@ -7,9 +7,9 @@ class RequestCache
     cache_setup
   end
 
-  def encode(_url, path, headers)
+  def encode(url, path, headers)
     k = headers.to_s
-    Base64.encode64(@om_target.to_s + path + k)
+    Base64.encode64(url + path + k).strip
   end
 
   def get_cache(id)
