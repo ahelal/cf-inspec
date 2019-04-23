@@ -79,12 +79,12 @@ jobs:
   - task: run-inspec
     file: cf-inspec-tasks/task/task.yml
     input_mapping:
-      tests: source-code
+      specs: source-code
     params:
       OM_TARGET: ((OM_TARGET))
       OM_USERNAME: ((OM_USERNAME))
       OM_PASSWORD: ((OM_PASSWORD))
-      TESTS_PATH: tests
+      SPECS_SUBDIR: test/examples/om
 ```
 
 ### API caching

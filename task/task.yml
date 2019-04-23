@@ -8,13 +8,14 @@ image_resource:
     tag: stable
 
 inputs:
-- name: tests
+- name: specs
 
 params:
   OM_TARGET:
   OM_USERNAME:
   OM_PASSWORD:
   OM_SKIP_SSL_VALIDATION:
+  SPECS_SUBDIR: .
 
 run:
   path: /bin/sh
@@ -23,4 +24,4 @@ run:
   - |
     set -e
     echo "Running tests ..."
-    inspec exec tests/$TESTS_PATH
+    inspec exec specs/${SPECS_SUBDIR}
