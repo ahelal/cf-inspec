@@ -6,7 +6,7 @@ require 'opsman/r_deployed_products'
 require 'opsman/r_director_properties'
 require 'opsman/r_info'
 require 'opsman/r_product_properties'
-require 'opsman/r_resource_job'
+require 'opsman/r_resource_jobs'
 require 'opsman/r_stemcells'
 require 'opsman/r_installations'
 require 'opsman/r_info'
@@ -23,6 +23,16 @@ class Opsman
     @cache = RequestCache.new
   end
 
+  def products(product_type)
+    products = get('/api/v0/deployed/products')
+    product_list = []
+    products.each do |product|
+      return product if product['type'] == product_type
+      product_list.push(product['type'])
+    end
+    raise "error unknown product '#{product_type}' available products are #{product_list}"
+  end
+
   def product_guid(product_type)
     product = products(product_type)
     return product['guid'] unless product.nil?
@@ -36,7 +46,7 @@ class Opsman
       return job['guid'] if job['name'] == job_name
       jobs_list.push(job['name'])
     end
-    raise "error unkown job '#{job_name}' avaiable jobs are #{jobs_list}"
+    raise "error unknown job '#{job_name}' available jobs are #{jobs_list}"
   end
 
   def get(path, headers = {})

@@ -4,3 +4,6 @@ Documentation:
   Enabled: false
 Style/MethodMissing:
   Enabled: false
+Metrics/BlockLength:
+  Exclude:
+    - '**/*_spec.rb'
