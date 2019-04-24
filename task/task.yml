@@ -4,8 +4,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: chef/inspec
-    tag: stable
+    repository: ruby
 
 inputs:
 - name: specs
@@ -16,9 +15,13 @@ params:
   OM_PASSWORD:
   OM_SKIP_SSL_VALIDATION:
   SPECS_SUBDIR: .
+  VERSION: 3.9.0
+  GEM_SOURCE: https://rubygems.org
 
 run:
-  path: /bin/sh
+  path: /bin/bash
   args:
   - -c
-  - "inspec exec --no-color specs/${SPECS_SUBDIR}"
+  - |
+    gem install --no-document --source ${GEM_SOURCE} --version ${VERSION} inspec
+    inspec exec --no-color specs/${SPECS_SUBDIR}
