@@ -34,7 +34,7 @@ class OmProductsProperties < Inspec.resource(1)
   def value(key)
     raise 'om_products_properties must be indexed into by at least product (e.g. cf)' unless key.is_a?(Array) && key.length >= 1
 
-    guid = @opsman.product_guid(key[0])
+    guid = @opsman.product_guid(key[0].to_s)
     properties = @opsman.get("/api/v0/staged/products/#{guid}/properties")['properties']
 
     if key.length == 1
