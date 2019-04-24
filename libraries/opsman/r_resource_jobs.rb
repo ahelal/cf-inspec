@@ -24,13 +24,6 @@ class OmResourceJobs < Inspec.resource(1)
     end
   end
 
-  def product_resources
-    p_guid = @opsman.product_guid(@product_type)
-    job_guid = @opsman.job_guid(p_guid, @job_name)
-
-    @opsman.get("/api/v0/staged/products/#{p_guid}/jobs/#{job_guid}/resource_config")
-  end
-
   def method_missing(*keys)
     # catch bahavior of rspec its implementation
     # @see https://github.com/rspec/rspec-its/blob/master/lib/rspec/its.rb#L110
