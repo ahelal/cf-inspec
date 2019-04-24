@@ -1,4 +1,4 @@
-require_relative '../spec_helper'
+require_relative 'spec_helper'
 require 'api_cache'
 
 describe 'cache time is not set' do
@@ -28,5 +28,27 @@ describe 'cache time is bigger then 0' do
   end
   after(:all) do
     FileUtils.remove_dir(ENV['INSPEC_CACHE_DIR'], true)
+  end
+end
+
+describe 'id should be unqiue' do
+  before(:all) do
+    @cache = RequestCache.new
+    @a = @cache.encode('A', 'B', 'C' => 1)
+    @b = @cache.encode('A', 'x', 'C' => 1)
+    @cv = @cache.encode('A', 'B', 'C' => 'x')
+    @ck = @cache.encode('A', 'B', 'x' => 1)
+    @a_duplicate = @cache.encode('A', 'B', 'C' => 1)
+  end
+  it 'does not match' do
+    expect(@a).not_to eq(@b)
+    expect(@a).not_to eq(@cv)
+    expect(@a).not_to eq(@ck)
+    expect(@b).not_to eq(@cv)
+    expect(@b).not_to eq(@ck)
+    expect(@cv).not_to eq(@ck)
+  end
+  it 'matchs' do
+    expect(@a).to eq(@a_duplicate)
   end
 end
