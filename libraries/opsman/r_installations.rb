@@ -13,7 +13,7 @@ class OmInstallation < Inspec.resource(1)
 
   attr_reader :params, :raw_content
 
-  def initialize(_path = nil)
+  def initialize
     @params = {}
     begin
       @opsman = Opsman.new

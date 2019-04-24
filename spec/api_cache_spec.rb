@@ -1,4 +1,4 @@
-require_relative '../spec_helper'
+require_relative 'spec_helper'
 require 'api_cache'
 
 describe 'cache time is not set' do
