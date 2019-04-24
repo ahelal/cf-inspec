@@ -12,6 +12,7 @@ context 'product properties' do
       products_properties = OmProductsProperties.new
       expect(products_properties['component-type1', '.properties.example_selector', 'value']).to eq 'Pizza'
       expect(products_properties['component-type1', '.properties.example_selector']).to include('value' => 'Pizza')
+      expect(products_properties['component-type1']).to include('.properties.example_selector' => include('value' => 'Pizza'))
     end
   end
 
