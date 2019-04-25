@@ -10,9 +10,9 @@ context 'product properties' do
       allow_any_instance_of(Opsman).to receive(:get).with('/api/v0/staged/products/component-type1-guid/properties').and_return(properties_response)
       allow_any_instance_of(Opsman).to receive(:auth).and_return(false)
       products_properties = OmProductsProperties.new
-      expect(products_properties['component-type1', '.properties.example_selector', 'value']).to eq 'Pizza'
-      expect(products_properties['component-type1', '.properties.example_selector']).to include('value' => 'Pizza')
-      expect(products_properties[:'component-type1']).to include('.properties.example_selector' => include('value' => 'Pizza'))
+      expect(products_properties.send(:[], 'component-type1', '.properties.example_selector', 'value')).to eq 'Pizza'
+      expect(products_properties.send(:[], 'component-type1', '.properties.example_selector')).to include('value' => 'Pizza')
+      expect(products_properties.send(:[], 'component-type1')).to include('.properties.example_selector' => include('value' => 'Pizza'))
     end
   end
 
