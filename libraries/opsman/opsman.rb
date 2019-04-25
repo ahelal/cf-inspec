@@ -64,7 +64,10 @@ class Opsman
   private
 
   def construct_http_client(uri_string)
-    uri = URI.parse(uri_string)
+    uri_string = 'https://' + uri_string unless uri_string.start_with? 'http'
+
+    uri = URI(uri_string)
+
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = uri.scheme == 'https'
     http.verify_mode = if @om_ssl_validation
