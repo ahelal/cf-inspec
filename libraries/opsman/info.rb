@@ -1,42 +1,42 @@
+=begin
+ name: om_info
+ desc: |
+        This resources returns version information of the Ops Manager.
+
+ api:
+   - https://docs.pivotal.io/pivotalcf/2-4/opsman-api/#getting-information-about-ops-manager
+
+ methods:
+     - version: contains the opsman version.
+     - raw_attribute: contains the raw api response.
+
+ example: |
+    control 'opsman should be reachable and using desired version' do
+        describe bosh_info do
+          its('version') { should match(/2.3/) }
+        end
+        describe bosh_info do
+          its('version') { should eq 'v2.3.0-build.79' }
+        end
+        describe bosh_info do
+          its('raw_content') { should include('info' => { 'version => match(/2.3/) }) }
+        end
+      end
+=end
 
 class OmInfo < Inspec.resource(1)
   name 'om_info'
-  desc 'Verify info about om'
 
-  example "
-    describe bosh_info do
-      its('version') { should match /2.3/ }
-    end
-  "
-
-  include ObjectTraverser
-
-  attr_reader :params, :raw_content
-
-  def initialize(_path = nil)
-    @params = {}
-    begin
-      @opsman = Opsman.new
-    rescue => e
-      raise Inspec::Exceptions::ResourceSkipped, "OM API error: #{e}"
-    end
+  def initialize
+    @opsman = Opsman.new
   end
 
   def version
-    obj = @opsman.get('/api/v0/info')
-    obj['info']['version']
+    info = raw_content
+    info['info']['version']
   end
 
-  def method_missing(*keys)
-    # catch bahavior of rspec its implementation
-    # @see https://github.com/rspec/rspec-its/blob/master/lib/rspec/its.rb#L110
-    keys.shift if keys.is_a?(Array) && keys[0] == :[]
-    value(keys)
-  end
-
-  def value(key)
-    # uses ObjectTraverser.extract_value to walk the hash looking for the key,
-    # which may be an Array of keys for a nested Hash.
-    extract_value(key, params)
+  def raw_content
+    @opsman.get('/api/v0/info')
   end
 end
