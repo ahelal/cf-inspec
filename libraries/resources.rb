@@ -1,3 +1,3 @@
 require 'api_cache'
-require 'opsman/opsman'
+require 'opsman/support/opsman'
 require 'capi/capi'

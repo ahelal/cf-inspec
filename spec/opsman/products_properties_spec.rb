@@ -1,6 +1,6 @@
 require_relative '../spec_helper'
 require 'inspec'
-require 'opsman/opsman'
+require 'opsman/support/opsman'
 
 context 'product properties' do
   describe 'om_products_properties resource' do

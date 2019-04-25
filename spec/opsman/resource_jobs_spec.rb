@@ -1,6 +1,6 @@
 require_relative '../spec_helper'
 require 'inspec'
-require 'opsman/opsman'
+require 'opsman/support/opsman'
 
 context 'resource_jobs' do
   describe 'opsman resource_jobs resource' do

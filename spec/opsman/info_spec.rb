@@ -1,6 +1,6 @@
 require_relative '../spec_helper'
 require 'inspec'
-require 'opsman/opsman'
+require 'opsman/support/opsman'
 
 describe 'opsman info resource' do
   it 'returns version' do
