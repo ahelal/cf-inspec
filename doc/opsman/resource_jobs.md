@@ -4,7 +4,7 @@ view [opsman](readme.md) resources list.
 
 ## Overview
 
-om_resource_jobs. is located [/libraries/opsman/resource_jobs.rb](/libraries/opsman/resource_jobs.rb)
+om_resource_jobs is located in [/libraries/opsman/resource_jobs.rb](/libraries/opsman/resource_jobs.rb)
 
 Opsman reference:
 
@@ -14,10 +14,10 @@ Opsman reference:
 ## Attributes/Methods
 
 
-* `element `0`` the tile name i.e. `cf`
+* `element 0` the tile name i.e. cf
 
 
-* `element `1`` the tile name i.e. `diego_cell`
+* `element 1` the tile name i.e. diego_cell
 
 
 ## Example

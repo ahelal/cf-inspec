@@ -8,8 +8,8 @@
    - https://docs.pivotal.io/pivotalcf/2-4/opsman-api/#retrieving-resource-configuration-for-a-product
 
  methods:
-     - element `0`: the tile name i.e. `cf`
-     - element `1`: the tile name i.e. `diego_cell`
+     - element 0: the tile name i.e. cf
+     - element 1: the tile name i.e. diego_cell
 
  example: |
       describe om_resource_jobs do

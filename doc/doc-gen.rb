@@ -19,7 +19,7 @@ MD_TEMPLATE_STRING = <<-MD.freeze
 
   ## Overview
 
-  <%= @docs['name']%>. is located [<%= @resource_file_md_path%>](<%= @resource_file_md_path%>)
+  <%= @docs['name']%> is located in [<%= @resource_file_md_path%>](<%= @resource_file_md_path%>)
 
   Opsman reference:
   <% for @item in @docs['api'] %>

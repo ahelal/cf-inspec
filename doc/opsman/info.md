@@ -4,7 +4,7 @@ view [opsman](readme.md) resources list.
 
 ## Overview
 
-om_info. is located [/libraries/opsman/info.rb](/libraries/opsman/info.rb)
+om_info is located in [/libraries/opsman/info.rb](/libraries/opsman/info.rb)
 
 Opsman reference:
 
