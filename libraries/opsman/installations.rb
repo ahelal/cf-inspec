@@ -1,26 +1,34 @@
+=begin
+ name: om_installations
+ desc: |
+         histroy of apply changes in opsman.
+ api:
+   - https://docs.pivotal.io/pivotalcf/2-4/opsman-api/#getting-a-list-of-recent-install-events
 
-class OmInstallation < Inspec.resource(1)
-  name 'om_installations'
-  desc 'Verify installation data'
-  example "
+ methods:
+     - status_of_last_run: status of last run
+     - status_of_last_completed_run: status of last completed run
+     - duration_of_last_completed_run: duration in seconds of last completed run
+     - last_run: raw format of last run
+     - last_completed_run: raw format of completed last run
+     - raw_attribute: contains the raw api response.
+
+ example: |
     describe om_installations do
       its('status_of_last_run') { should eq 'succeeded' }
       its('status_of_last_completed_run') { should eq 'succeeded' }
       its('duration_of_last_completed_run') { should be < 60 * 60 }
     end
-  "
-  include ObjectTraverser
+=end
 
-  attr_reader :params, :raw_content
+class OmInstallation < Inspec.resource(1)
+  name 'om_installations'
 
   def initialize
-    @params = {}
-    begin
-      @opsman = Opsman.new
-      @installations = fetch_installations
-    rescue => e
-      raise Inspec::Exceptions::ResourceSkipped, "OM API error: #{e}"
-    end
+    @opsman = Opsman.new
+    @installations = raw_content
+  rescue => e
+    raise Inspec::Exceptions::ResourceSkipped, "OM API error: #{e}"
   end
 
   def status_of_last_run
@@ -38,27 +46,6 @@ class OmInstallation < Inspec.resource(1)
     ((stop - start) * 24 * 60).to_i
   end
 
-  def method_missing(*keys)
-    # catch bahavior of rspec its implementation
-    # @see https://github.com/rspec/rspec-its/blob/master/lib/rspec/its.rb#L110
-    keys.shift if keys.is_a?(Array) && keys[0] == :[]
-    value(keys)
-  end
-
-  def value(key)
-    # uses ObjectTraverser.extract_value to walk the hash looking for the key,
-    # which may be an Array of keys for a nested Hash.
-    extract_value(key, params)
-  end
-
-  private
-
-  def fetch_installations
-    obj = @opsman.get('/api/v0/installations')
-    raise 'Opsman has no installations.' if obj['installations'].empty?
-    obj['installations']
-  end
-
   def last_run
     @installations[0]
   end
@@ -67,5 +54,11 @@ class OmInstallation < Inspec.resource(1)
     @installations.each do |installation|
       return installation if %w[succeeded failed].include? installation['status']
     end
+  end
+
+  def raw_content
+    obj = @opsman.get('/api/v0/installations')
+    raise 'Opsman has no installations.' if obj['installations'].empty?
+    obj['installations']
   end
 end
