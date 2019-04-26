@@ -17,6 +17,7 @@ params:
   SPECS_SUBDIR: .
   VERSION: 3.9.0
   GEM_SOURCE: https://rubygems.org
+  INSPEC_CACHE_TIME: 0
 
 run:
   path: /bin/bash
