@@ -1,10 +1,10 @@
 # om_info
 
-view [opsman](../readme.md) resources list.
+view [opsman](readme.md) resources list.
 
 ## Overview
 
-om_info. is locate [/libraries/opsman/info.rb](/libraries/opsman/info.rb)
+om_info. is located [/libraries/opsman/info.rb](/libraries/opsman/info.rb)
 
 Opsman reference:
 

@@ -3,14 +3,23 @@
 require 'inspec'
 require 'erb'
 
+MD_README_STRING = <<-MD.freeze
+  # <%= lib_name %>
+
+  Available resources:
+  <% for @r in @rendered_resources %>
+  * [<%= @r['key'] %>](<%= @r['path'] %>.md)
+  <% end %>
+MD
+
 MD_TEMPLATE_STRING = <<-MD.freeze
   # <%= @docs['name'] %>
 
-  view [<%= @lib_name %>](../readme.md) resources list.
+  view [<%= @lib_name %>](readme.md) resources list.
 
   ## Overview
 
-  <%= @docs['name']%>. is locate [<%= @resource_file_md_path%>](<%= @resource_file_md_path%>)
+  <%= @docs['name']%>. is located [<%= @resource_file_md_path%>](<%= @resource_file_md_path%>)
 
   Opsman reference:
   <% for @item in @docs['api'] %>
@@ -42,10 +51,7 @@ class MDTemplate
     @docs = content[/#{Regexp.escape('=begin')}(.*?)#{Regexp.escape('=end')}/m, 1]
 
     @resource_file_md_path = @resource_file.sub(File.absolute_path(File.join(__dir__, '../')), '')
-    render
   end
-
-  private
 
   def render
     if @docs.nil? || @docs.empty?
@@ -56,16 +62,26 @@ class MDTemplate
     rendered_output = ERB.new(MD_TEMPLATE_STRING.gsub(/^  /, '')).result(binding)
     puts "* Render DOCS is defined for #{@md_file}"
     File.open(@md_file, 'w') { |file| file.write(rendered_output) }
+    @docs['name']
   end
 end
 
+def render_readme(md_outputdir, lib_name)
+  rendered_output = ERB.new(MD_README_STRING.gsub(/^  /, '')).result(binding)
+  File.open(File.join(md_outputdir, 'readme.md'), 'w') { |file| file.write(rendered_output) }
+end
+
 def loop_resources_dir(resource_dir, md_outputdir, lib_name)
+  @rendered_resources = []
   Dir.foreach(resource_dir) do |f|
     resource_file_path = File.join(resource_dir, f)
     next unless File.file?(resource_file_path) && f.end_with?('.rb')
     md_file_path = File.join(md_outputdir, f).sub('.rb', '.md')
-    MDTemplate.new(resource_file_path, md_file_path, lib_name)
+    md = MDTemplate.new(resource_file_path, md_file_path, lib_name)
+    rendered = md.render
+    @rendered_resources.push('key' => rendered, 'path' => f.sub('.rb', '')) if rendered
   end
+  render_readme(md_outputdir, lib_name)
 end
 
 ## Loop over libaries
