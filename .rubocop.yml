@@ -7,5 +7,5 @@ Style/MethodMissing:
 Metrics/BlockLength:
   Exclude:
     - '**/*_spec.rb'
-convention:Style/BlockComments:
+Style/BlockComments:
   Enabled: false
