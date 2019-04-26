@@ -257,7 +257,6 @@ PLATFORMS
 
 DEPENDENCIES
   inspec
-  pry
   rspec
   rspec-mocks
   rubocop
