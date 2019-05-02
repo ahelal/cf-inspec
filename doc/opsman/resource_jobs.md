@@ -16,7 +16,7 @@ Opsman reference:
 * `element 0` the tile name i.e. cf
 
 
-* `element 1` the tile name i.e. diego_cell
+* `element 1` the jobs name i.e. diego_cell
 
 
 ## Example

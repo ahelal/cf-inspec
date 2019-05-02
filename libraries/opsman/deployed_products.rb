@@ -1,16 +1,27 @@
+=begin
+ name: om_deployed_products
+ desc: |
+        check deployed product version
+
+ api:
+   - https://docs.pivotal.io/pivotalcf/2-4/opsman-api/#retrieving-resource-configuration-for-a-product
+
+ methods:
+     - element 0: the tile name i.e. cf
+     - element 1: version
+
+ example: |
+    describe om_deployed_products do
+      its(['pivotal-mysql', 'version']) { should match /2.4.4/ }
+    end
+=end
 
 class OmDeployedProducts < Inspec.resource(1)
   name 'om_deployed_products'
 
-  example "
-    describe om_deployed_products do
-      its(['pivotal-mysql', 'version']) { should match /2.4.4/ }
-    end
-  "
-
   include ObjectTraverser
 
-  attr_reader :params, :raw_content
+  attr_reader :params
 
   def initialize
     @params = {}

@@ -1,16 +1,27 @@
+=begin
+ name: om_products_properties
+ desc: |
+        Returns tile properties
+
+ api:
+   - https://docs.pivotal.io/pivotalcf/2-4/opsman-api/#retrieving-resource-configuration-for-a-product
+
+ methods:
+     - element 0: the tile name i.e. cf
+     - element n: nest property
+
+ example: |
+    describe om_products_properties do
+      its(['pivotal-mysql', '.properties.plan3_selector.active.name', 'value']) { should eq 'db-large' }
+    end
+=end
 
 class OmProductsProperties < Inspec.resource(1)
   name 'om_products_properties'
 
-  example "
-    describe om_products_properties do
-      its(['pivotal-mysql', '.properties.plan3_selector.active.name', 'value']) { should eq 'db-large' }
-    end
-  "
-
   include ObjectTraverser
 
-  attr_reader :params, :raw_content
+  attr_reader :params
 
   def initialize
     @params = {}

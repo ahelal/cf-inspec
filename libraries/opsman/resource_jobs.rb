@@ -9,7 +9,7 @@
 
  methods:
      - element 0: the tile name i.e. cf
-     - element 1: the tile name i.e. diego_cell
+     - element 1: the jobs name i.e. diego_cell
 
  example: |
       describe om_resource_jobs do
@@ -18,6 +18,7 @@
         its(['cf', 'diego_cell', 'instance_type', 'id']) { should eq 'm3.medium' }
       end
 =end
+
 class OmResourceJobs < Inspec.resource(1)
   name 'om_resource_jobs'
 
