@@ -5,7 +5,6 @@ view [opsman](readme.md) resources list.
 ## Overview
 
 om_installations is located in [/libraries/opsman/installations.rb](/libraries/opsman/installations.rb)
-
 Opsman reference:
 
 * https://docs.pivotal.io/pivotalcf/2-4/opsman-api/#getting-a-list-of-recent-install-events

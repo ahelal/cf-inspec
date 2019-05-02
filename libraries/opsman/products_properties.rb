@@ -1,7 +1,6 @@
 
 class OmProductsProperties < Inspec.resource(1)
   name 'om_products_properties'
-  desc ''
 
   example "
     describe om_products_properties do

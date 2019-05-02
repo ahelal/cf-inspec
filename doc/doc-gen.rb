@@ -20,23 +20,22 @@ MD_TEMPLATE_STRING = <<-MD.freeze
   ## Overview
 
   <%= @docs['name']%> is located in [<%= @resource_file_md_path%>](<%= @resource_file_md_path%>)
-
-  Opsman reference:
+  <% if @docs.key?('api') %>Opsman reference:
   <% for @item in @docs['api'] %>
   * <%= @item %>
-  <% end %>
+  <% end %><% end %>
 
-  ## Attributes/Methods
+  <% if @docs.key?('methods') %>## Attributes/Methods
   <% for m in @docs['methods'] %>
   <% m.each do |k,v| %>
   * `<%= k %>` <%= v %>
-  <% end %><% end %>
+  <% end %><% end %><% end %>
 
-  ## Example
+  <% if @docs.key?('api') %>## Example
 
   ```ruby
   <%= @docs['example'] %>
-  ```
+  ```<% end %>
 MD
 
 LIB_DIR = File.join(__dir__, '../libraries')
@@ -58,9 +57,9 @@ class MDTemplate
       puts "* Skipping #{@resource_file}"
       return false
     end
+    puts "* Rendering #{@md_file}"
     @docs = YAML.safe_load(@docs)
     rendered_output = ERB.new(MD_TEMPLATE_STRING.gsub(/^  /, '')).result(binding)
-    puts "* Render DOCS is defined for #{@md_file}"
     File.open(@md_file, 'w') { |file| file.write(rendered_output) }
     @docs['name']
   end

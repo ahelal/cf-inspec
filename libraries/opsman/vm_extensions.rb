@@ -1,51 +1,46 @@
+=begin
+ name: om_vm_extensions
+ desc: |
+        Check deployed VM extensions
+ api:
+   - https://docs.pivotal.io/pivotalcf/2-4/opsman-api/#deployed-vm-extensions
+ methods:
+     - extensions: get all vm extensions without filters
+     - extension: return a specific extension (must be supplied as an argument)
+ example: |
+    control 'OM vm extensions all loadbalancer' do
+      describe om_vm_extensions do
+        its('extensions') { should_not be_empty }
+      end
+    end
+    control 'OM vm extensions tags A' do
+      cp = { 'cloud_properties' => { 'tags' => %w[tag1 tag2 tag3] }, 'name' => 'A' }
+      describe om_vm_extensions('EXT_A') do
+        its('extension') { should eq cp }
+      end
+    end
+=end
 
 class VMExtensions < Inspec.resource(1)
   name 'om_vm_extensions'
-  desc 'Verify info about vm_extensions'
 
-  example "
+  def initialize(extension_name = false)
+    @opsman = Opsman.new
+    @extension_name = extension_name
+  rescue => e
+    raise Inspec::Exceptions::ResourceSkipped, "OM API error: #{e}"
+  end
 
-  "
-
-  include ObjectTraverser
-
-  attr_reader :params, :raw_content
-
-  def initialize(extention_name = false)
-    @params = {}
-    begin
-      @opsman = Opsman.new
-      @extention_name = extention_name
-    rescue => e
-      raise Inspec::Exceptions::ResourceSkipped, "OM API error: #{e}"
+  def extension
+    extensions_list = []
+    extensions.each do |ext|
+      return ext if ext['name'] == @extension_name
+      extensions_list.push(ext['name'])
     end
+    raise "error unknown extension '#{@extension_name}' available extensions are #{extensions_list}"
   end
 
-  def extentions
-    exts = all_extentions
-    return exts unless @extention_name
-
-    exts.each do |ext|
-      return ext if ext['name'] == @extention_name
-    end
-  end
-
-  def method_missing(*keys)
-    # catch bahavior of rspec its implementation
-    # @see https://github.com/rspec/rspec-its/blob/master/lib/rspec/its.rb#L110
-    keys.shift if keys.is_a?(Array) && keys[0] == :[]
-    value(keys)
-  end
-
-  def value(key)
-    # uses ObjectTraverser.extract_value to walk the hash looking for the key,
-    # which may be an Array of keys for a nested Hash.
-    extract_value(key, params)
-  end
-
-  private
-
-  def all_extentions
+  def extensions
     obj = @opsman.get('/api/v0/deployed/vm_extensions')
     obj['vm_extensions']
   end

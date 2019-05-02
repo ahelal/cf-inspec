@@ -1,16 +1,29 @@
+=begin
+ name: om_assigned_stemcells
+ desc: |
+        Check deployed VM extensions
+ api:
+   - https://docs.pivotal.io/pivotalcf/2-4/opsman-api/#deployed-vm-extensions
+ methods:
+     - extensions: get all vm extensions without filters
+     - extension: return a specific extension (must be supplied as an argument)
+ example: |
+    control 'Assigned PAS stemcell' do
+      title 'should be pinned'
+      describe om_assigned_stemcells('cf') do
+        its('version') { should eq '97.74' }
+      end
+    end
+    control 'All assigned stemcell' do
+      title 'should be ubuntu xenial'
+      describe om_assigned_stemcells do
+        its('versions') { should all(include('97.')) }
+      end
+    end
+=end
 
 class OmStemcellsJob < Inspec.resource(1)
   name 'om_assigned_stemcells'
-  desc ''
-
-  example "
-    describe om_assigned_stemcells('cf') do
-      its('version') { should eq '97.57' }
-    end
-    describe om_assigned_stemcells do
-      its('versions') { should all(include('97.')) }
-    end
-  "
 
   include ObjectTraverser
 
@@ -44,19 +57,6 @@ class OmStemcellsJob < Inspec.resource(1)
       return { 'version' => stemcell_assignment['staged_stemcell_version'] } if stemcell_assignment['guid'] == p_guid
     end
     raise "error unkown product '#{@product_type}'"
-  end
-
-  def method_missing(*keys)
-    # catch bahavior of rspec its implementation
-    # @see https://github.com/rspec/rspec-its/blob/master/lib/rspec/its.rb#L110
-    keys.shift if keys.is_a?(Array) && keys[0] == :[]
-    value(keys)
-  end
-
-  def value(key)
-    # uses ObjectTraverser.extract_value to walk the hash looking for the key,
-    # which may be an Array of keys for a nested Hash.
-    extract_value(key, params)
   end
 
   private

@@ -1,7 +1,6 @@
 
 class OmDeployedProducts < Inspec.resource(1)
   name 'om_deployed_products'
-  desc ''
 
   example "
     describe om_deployed_products do
