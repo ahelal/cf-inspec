@@ -37,24 +37,39 @@ Optional variables
 
 ### Available resources
 
-* `om_info` Opsman version
-* `om_deployed_product` verify tiles are deployed and version
-* `om_product_properties`verify tile properties
-* `om_resource_job` verify resources for a job
-* `om_director_properties` verify director properties
-* `om_assigned_stemcells` verify version(s) of assigned stemcells
-* `om_installations` verify opsman apply changes
-* `om_certificates` verify opsman certificates
-* `om_vm_extensions` verify vm extensions
-
+List of [available resources](doc/opsman)
 
 #### Examples
 
-Check the [examples](test/examples/om/controls)
+Check the [examples](test/examples/opsman/controls)
+
+```ruby
+describe om_certificates(1, 'm') do
+  its('expires') { should be_empty }
+end
+
+describe om_deployed_products do
+  its(['pivotal-mysql', 'version']) { should match(/2.4.4/) }
+end
+
+describe om_director_properties do
+  its(%w[iaas_configuration encrypted]) { should eq true }
+  its(%w[director_configuration ntp_servers_string]) { should eq 'us.pool.ntp.org, time.google.com' }
+  its(%w[iaas_configuration tls_enabled]) { should eq true }
+  its(%w[syslog_configuration enabled]) { should eq true }
+end
+
+describe om_resource_jobs do
+  its(%w[cf diego_cell instances]) { should eq 10 }
+  its(%w[cf diego_cell instance_type id]) { should eq 'm3.medium' }
+end
+```
 
 ### Running in Concourse
 
-Add the following task to your pipeline and map the location of your tests to the "tests" input of the task.
+Add the following task to your pipeline and map the location of your tests to the `specs` input. if your test is located in a subdir you need to pass that too `SPECS_SUBDIR: PATH/../`
+
+You should read the inspec EULA and if you agree flip the `EULA: true`
 
 ```yaml
 ---
@@ -85,6 +100,8 @@ jobs:
       OM_USERNAME: ((OM_USERNAME))
       OM_PASSWORD: ((OM_PASSWORD))
       SPECS_SUBDIR: test/examples/om
+      INSPEC_CACHE_TIME: 0
+      EULA: true
 ```
 
 ### API caching

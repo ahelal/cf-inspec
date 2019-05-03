@@ -16,9 +16,9 @@ params:
   OM_SKIP_SSL_VALIDATION:
   SPECS_SUBDIR: .
   INSPEC_CACHE_TIME: 0
+  EULA: false
   VERSION: "4.3.2"
   SHA256: "343ec7b04e55aa9cb654c2925c9d40f98980d0ea376552c81582e86c7073ea8a"
-  EULA: false
 
 run:
   path: /bin/bash
