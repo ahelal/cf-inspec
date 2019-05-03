@@ -41,27 +41,37 @@ List of [available resources](doc/opsman)
 
 #### Examples
 
-Check the [examples](test/examples/opsman/controls)
+Check the [Opsman examples](test/examples/opsman/controls)
+
+An example profile
 
 ```ruby
-describe om_certificates(1, 'm') do
-  its('expires') { should be_empty }
+control 'opsman should be reachable and using desired version' do
+  describe bosh_info do
+    its('version') { should match(/2.3/) }
+  end
 end
 
-describe om_deployed_products do
-  its(['pivotal-mysql', 'version']) { should match(/2.4.4/) }
+control 'Certificate should not expire in the next two months' do
+  describe om_certificates(2, 'm') do
+    its('expires') { should be_empty }
+  end
 end
 
 describe om_director_properties do
-  its(%w[iaas_configuration encrypted]) { should eq true }
   its(%w[director_configuration ntp_servers_string]) { should eq 'us.pool.ntp.org, time.google.com' }
   its(%w[iaas_configuration tls_enabled]) { should eq true }
   its(%w[syslog_configuration enabled]) { should eq true }
 end
 
-describe om_resource_jobs do
-  its(%w[cf diego_cell instances]) { should eq 10 }
-  its(%w[cf diego_cell instance_type id]) { should eq 'm3.medium' }
+control 'PCF should be installed, and deigo_cell should be in desired the instance count and type' do
+  describe om_deployed_products do
+    its(%w[cf version]) { should match(/2.3.9/) }
+  end
+  describe om_resource_jobs do
+    its(%w[cf diego_cell instances]) { should be > 10 }
+    its(%w[cf diego_cell instance_type id]) { should eq 'm3.medium' }
+  end
 end
 ```
 
