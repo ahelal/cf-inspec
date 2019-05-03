@@ -6,7 +6,7 @@ DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 cd "${DIR}/.."
 
 echo "Run Rubocop"
-bundle exec rubocop libraries spec ./doc/*.rb
+bundle exec rubocop libraries spec ./doc/*.rb test/examples/opsman/controls/*.rb
 
 echo "Run rspec"
 bundle exec rspec --require spec_helper --format d
