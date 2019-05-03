@@ -5,6 +5,7 @@ view [opsman](readme.md) resources list.
 ## Overview
 
 om_products_properties is located in [/libraries/opsman/products_properties.rb](/libraries/opsman/products_properties.rb)
+
 Opsman reference:
 
 * https://docs.pivotal.io/pivotalcf/2-4/opsman-api/#retrieving-resource-configuration-for-a-product

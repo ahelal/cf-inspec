@@ -5,6 +5,7 @@ view [opsman](readme.md) resources list.
 ## Overview
 
 om_deployed_products is located in [/libraries/opsman/deployed_products.rb](/libraries/opsman/deployed_products.rb)
+
 Opsman reference:
 
 * https://docs.pivotal.io/pivotalcf/2-4/opsman-api/#retrieving-resource-configuration-for-a-product

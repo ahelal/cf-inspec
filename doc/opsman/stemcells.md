@@ -5,6 +5,7 @@ view [opsman](readme.md) resources list.
 ## Overview
 
 om_assigned_stemcells is located in [/libraries/opsman/stemcells.rb](/libraries/opsman/stemcells.rb)
+
 Opsman reference:
 
 * https://docs.pivotal.io/pivotalcf/2-4/opsman-api/#deployed-vm-extensions

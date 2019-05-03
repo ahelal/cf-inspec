@@ -5,6 +5,7 @@ view [opsman](readme.md) resources list.
 ## Overview
 
 om_info is located in [/libraries/opsman/info.rb](/libraries/opsman/info.rb)
+
 Opsman reference:
 
 * https://docs.pivotal.io/pivotalcf/2-4/opsman-api/#getting-information-about-ops-manager

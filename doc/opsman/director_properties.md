@@ -5,6 +5,7 @@ view [opsman](readme.md) resources list.
 ## Overview
 
 om_director_properties is located in [/libraries/opsman/director_properties.rb](/libraries/opsman/director_properties.rb)
+
 Opsman reference:
 
 * https://docs.pivotal.io/pivotalcf/2-4/opsman-api/#staged-bosh-director

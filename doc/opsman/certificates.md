@@ -5,6 +5,7 @@ view [opsman](readme.md) resources list.
 ## Overview
 
 om_certificates is located in [/libraries/opsman/certificates.rb](/libraries/opsman/certificates.rb)
+
 Opsman reference:
 
 * https://docs.pivotal.io/pivotalcf/2-4/opsman-api/#getting-information-about-certificates-from-products

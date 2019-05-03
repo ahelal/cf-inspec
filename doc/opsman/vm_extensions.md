@@ -5,6 +5,7 @@ view [opsman](readme.md) resources list.
 ## Overview
 
 om_vm_extensions is located in [/libraries/opsman/vm_extensions.rb](/libraries/opsman/vm_extensions.rb)
+
 Opsman reference:
 
 * https://docs.pivotal.io/pivotalcf/2-4/opsman-api/#deployed-vm-extensions
