@@ -13,6 +13,7 @@ context 'bosh_deployments' do
   it 'returns the list of deployments' do
     deployments = BoshDeployments.new
     expect(deployments.params.keys).to contain_exactly 'cf-warden'
+    expect(deployments.deployment_names).to contain_exactly 'cf-warden'
     expect(deployments.send(:[], 'cf-warden', 'releases', 0, 'name')).to eq 'cf'
     expect(deployments.send(:[], 'cf-warden')).to include('releases' => include(include('name' => 'cf')))
   end

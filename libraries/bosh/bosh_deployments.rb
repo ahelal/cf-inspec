@@ -31,6 +31,10 @@ class BoshDeployments < Inspec.resource(1)
     end
   end
 
+  def deployment_names
+    @params.keys
+  end
+
   def method_missing(*keys)
     # catch bahavior of rspec its implementation
     # @see https://github.com/rspec/rspec-its/blob/master/lib/rspec/its.rb#L110
