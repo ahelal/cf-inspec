@@ -23,7 +23,7 @@ class BoshInfo < Inspec.resource(1)
     @params = {}
     begin
       @bosh_client = BoshClient.new
-      @params = @bosh_client.info
+      @params = @bosh_client.get '/info'
     rescue => e
       raise Inspec::Exceptions::ResourceSkipped, "BOSH API error: #{e}"
     end
