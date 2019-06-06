@@ -23,7 +23,7 @@ class BoshDeployments < Inspec.resource(1)
     @params = {}
     begin
       @bosh_client = BoshClient.new
-      @params = @bosh_client.get('/deployments')
+      @params = @bosh_client.get('/deployments?exclude_configs=true')
                             .group_by { |d| d['name'] }
                             .each_with_object({}) { |(k, v), h| h[k] = v.first }
     rescue => e

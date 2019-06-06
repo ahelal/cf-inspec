@@ -7,7 +7,7 @@ context 'bosh_deployments' do
     ENV['BOSH_ENVIRONMENT'] = 'fake-bosh-director-url'
     ENV['BOSH_CLIENT'] = 'admin'
     ENV['BOSH_CLIENT_SECRET'] = 'secret'
-    allow_any_instance_of(BoshClient).to receive(:get).with('/deployments').and_return(deployments_response)
+    allow_any_instance_of(BoshClient).to receive(:get).with('/deployments?exclude_configs=true').and_return(deployments_response)
   end
 
   it 'returns the list of deployments' do

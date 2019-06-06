@@ -33,11 +33,8 @@ class BoshClient
 
     http = Net::HTTP.new(uri.host, port)
     http.use_ssl = uri.scheme == 'https'
-    http.verify_mode = if @om_ssl_validation
-                         OpenSSL::SSL::VERIFY_NONE
-                       else
-                         OpenSSL::SSL::VERIFY_PEER
-                       end
+    http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+
     if @bosh_ca_cert
       ca_path = '/tmp/bosh_ca_cert.pem'
       File.open(ca_path, 'w') { |file| file.write(@bosh_ca_cert) }
@@ -49,7 +46,7 @@ class BoshClient
 
   def authorize
     http = construct_http_client(@bosh_environment.to_s, 8_443)
-    request = Net::HTTP::Post.new('oauth/token')
+    request = Net::HTTP::Post.new('/oauth/token')
     form = URI.encode_www_form('grant_type' => 'client_credentials',
                                'client_id' => @bosh_client,
                                'client_secret' => @bosh_client_secret)
