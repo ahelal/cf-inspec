@@ -37,13 +37,9 @@ class BoshClient
                          OpenSSL::SSL::VERIFY_PEER
                        end
     if @bosh_ca_cert
-      file = Tempfile.new('bosh_ca_cert')
-      begin
-        file.write(@bosh_ca_cert)
-      ensure
-        file.close
-      end
-      http.ca_file = file
+      ca_path = '/tmp/bosh_ca_cert.pem'
+      File.open(ca_path, 'w') { |file| file.write(@bosh_ca_cert) }
+      http.ca_path = ca_path
     end
 
     http
