@@ -39,7 +39,7 @@ class BoshClient
     if @bosh_ca_cert
       ca_path = '/tmp/bosh_ca_cert.pem'
       File.open(ca_path, 'w') { |file| file.write(@bosh_ca_cert) }
-      http.ca_path = ca_path
+      http.ca_file = File.path(ca_path)
     end
 
     http
