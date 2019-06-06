@@ -57,7 +57,7 @@ class BoshClient
       raise "Authentication request failed. #{response.value}"
     end
 
-    pp response
+    pp response.body
 
     @access_token = JSON.parse(response.body)['access_token']
   end
