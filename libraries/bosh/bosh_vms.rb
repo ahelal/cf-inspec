@@ -29,8 +29,8 @@ class BoshVms < Inspec.resource(1)
     end
   end
 
-  def deployment_names
-    @params.keys
+  def for_job_matching(r)
+    @params.select { |vm_stats| vm_stats['job_name'].match? r }
   end
 
   def method_missing(*keys)

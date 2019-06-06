@@ -10,12 +10,14 @@ context 'bosh_deployments' do
     allow_any_instance_of(BoshClient).to receive(:get).with('/deployments/cf-warden/vms?format=full').and_return(vms_response)
   end
 
-  it 'returns the list of deployments' do
+  it 'returns the list of vms' do
     vms = BoshVms.new('cf-warden')
-    # expect(vms.params.keys).to contain_exactly 'cf-warden'
-    # expect(vms.deployment_names).to contain_exactly 'cf-warden'
     expect(vms.send(:[], 0, 'vm_type')).to eq 'resource_pool_1'
-    # expect(vms.send(:[], 'cf-warden')).to include('releases' => include(include('name' => 'cf')))
+  end
+
+  it 'can provide the vms keyed by job_name' do
+    vms = BoshVms.new('cf-warden')
+    expect(vms.for_job_matching(/example_s.+/)).to include(include('state' => 'started'))
   end
 
   let(:vms_response) do
