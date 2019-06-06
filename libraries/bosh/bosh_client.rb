@@ -5,6 +5,8 @@ require 'bosh/bosh_deployments'
 require 'bosh/bosh_info'
 require 'bosh/bosh_vms'
 
+require 'pp'
+
 class BoshClient
   def initialize
     @bosh_client = ENV['BOSH_CLIENT'] || raise('no BOSH_CLIENT defined')
@@ -54,6 +56,9 @@ class BoshClient
     when !Net::HTTPSuccess then
       raise "Authentication request failed. #{response.value}"
     end
+
+    pp response
+
     @access_token = JSON.parse(response.body)['access_token']
   end
 end
