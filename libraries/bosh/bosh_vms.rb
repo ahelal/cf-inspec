@@ -1,12 +1,12 @@
 # require 'bosh_api'
 require 'pp'
 
-class BoshDeployments < Inspec.resource(1)
-  name 'bosh_deployments'
-  desc 'Verify info about bosh deployments'
+class BoshVms < Inspec.resource(1)
+  name 'bosh_vms'
+  desc "Verify info about a bosh deployment's vms"
 
   example "
-    describe bosh_deployments do
+    describe bosh_vms('cf-warden') do
       its('keys') { should contain '263.1.0' }
       its(['user_authentication','type']) { should eq 'uaa'}
       its(['user_authentication','options', 'url']) { should eq 'https://10.0.0.6:8443'}
@@ -19,13 +19,11 @@ class BoshDeployments < Inspec.resource(1)
 
   attr_reader :params
 
-  def initialize
+  def initialize(deployment_name)
     @params = {}
     begin
       @bosh_client = BoshClient.new
-      @params = @bosh_client.get('/deployments')
-                            .group_by { |d| d['name'] }
-                            .transform_values(&:first)
+      @params = @bosh_client.get("/deployments/#{deployment_name}/vms?format=full")
     rescue => e
       raise Inspec::Exceptions::ResourceSkipped, "BOSH API error: #{e}"
     end

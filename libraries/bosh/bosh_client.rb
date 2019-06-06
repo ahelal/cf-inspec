@@ -3,6 +3,7 @@ require 'openssl'
 require 'json'
 require 'bosh/bosh_deployments'
 require 'bosh/bosh_info'
+require 'bosh/bosh_vms'
 
 class BoshClient
   def initialize
