@@ -25,7 +25,7 @@ class BoshDeployments < Inspec.resource(1)
       @bosh_client = BoshClient.new
       @params = @bosh_client.get('/deployments')
                             .group_by { |d| d['name'] }
-                            .transform_values(&:first)
+                            .each_with_object({}) { |(k, v), h| h[k] = v.first }
     rescue => e
       raise Inspec::Exceptions::ResourceSkipped, "BOSH API error: #{e}"
     end
