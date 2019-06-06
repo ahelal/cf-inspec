@@ -29,7 +29,7 @@ class BoshClient
 
     uri = URI(uri_string)
 
-    http = Net::HTTP.new(uri.host, uri.port)
+    http = Net::HTTP.new(uri.host, 25_555)
     http.use_ssl = uri.scheme == 'https'
     http.verify_mode = if @om_ssl_validation
                          OpenSSL::SSL::VERIFY_NONE
