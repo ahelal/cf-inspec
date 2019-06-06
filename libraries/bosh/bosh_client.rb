@@ -32,22 +32,17 @@ class BoshClient
   end
 
   def bosh_api
-    Faraday.new(url: bosh_director_url, ssl: { ca_file: @ca_path }) do |faraday|
-      faraday.port = 25_555
-      # faraday.response :logger
-      faraday.authorization :Bearer, access_token
-      faraday.adapter Faraday.default_adapter
-    end
+    conn = Faraday.new(url: bosh_director_url, ssl: { ca_file: @ca_path })
+    conn.port = 25_555
+    conn.authorization :Bearer, access_token
+    conn
   end
 
   def access_token
     return @access_token if @access_token
 
-    conn = Faraday.new(url: bosh_director_url, ssl: { ca_file: @ca_path }) do |faraday|
-      faraday.port = 8_443
-      # faraday.response :logger
-      faraday.adapter Faraday.default_adapter
-    end
+    conn = Faraday.new(url: bosh_director_url, ssl: { ca_file: @ca_path })
+    conn.port = 8_443
 
     response = conn.post('/oauth/token', 'grant_type' => 'client_credentials',
                                          'client_id' => @bosh_client,
