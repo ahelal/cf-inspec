@@ -36,6 +36,16 @@ class BoshClient
                        else
                          OpenSSL::SSL::VERIFY_PEER
                        end
+    if @bosh_ca_cert
+      file = Tempfile.new('bosh_ca_cert')
+      begin
+        file.write(@bosh_ca_cert)
+      ensure
+        file.close
+      end
+      http.ca_file = file
+    end
+
     http
   end
 end
