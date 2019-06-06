@@ -18,7 +18,6 @@ class BoshClient
     authorize unless @access_token
     http = construct_http_client(@bosh_environment.to_s)
     request = Net::HTTP::Get.new(path, Authorization: "Bearer #{@access_token}")
-    request.basic_auth(@bosh_client, @bosh_client_secret)
     response = http.request(request)
     JSON.parse(response.body)
   end
