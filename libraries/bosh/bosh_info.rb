@@ -25,6 +25,9 @@ class BoshInfo < Inspec.resource(1)
       @bosh_client = BoshClient.new
       @params = @bosh_client.get '/info'
     rescue => e
+      puts "Error during processing: #{$ERROR_INFO}"
+      puts "Backtrace:\n\t#{e.backtrace.join("\n\t")}"
+
       raise Inspec::Exceptions::ResourceSkipped, "BOSH API error: #{e}"
     end
   end

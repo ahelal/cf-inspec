@@ -1,6 +1,7 @@
 require 'net/http'
 require 'openssl'
 require 'json'
+require 'faraday'
 require 'bosh/bosh_deployments'
 require 'bosh/bosh_info'
 require 'bosh/bosh_vms'
@@ -12,46 +13,48 @@ class BoshClient
     @bosh_environment = ENV['BOSH_ENVIRONMENT'] || raise('no BOSH_ENVIRONMENT defined')
     @bosh_ca_cert = ENV['BOSH_CA_CERT']
     @access_token = nil
+    @ca_path = '/tmp/bosh_ca_cert.pem'
+
+    File.open(@ca_path, 'w') { |file| file.write(@bosh_ca_cert) } if @bosh_ca_cert
   end
 
   def get(path)
-    authorize unless @access_token
-    http = construct_http_client(@bosh_environment.to_s)
-    request = Net::HTTP::Get.new(path, Authorization: "Bearer #{@access_token}")
-    response = http.request(request)
+    response = bosh_api.get path
+
     JSON.parse(response.body)
   end
 
   private
 
-  def construct_http_client(uri_string, port = 25_555)
-    uri_string = 'https://' + uri_string unless uri_string.start_with? 'http'
-
-    uri = URI(uri_string)
-
-    http = Net::HTTP.new(uri.host, port)
-    http.use_ssl = uri.scheme == 'https'
-    http.verify_mode = OpenSSL::SSL::VERIFY_PEER
-
-    if @bosh_ca_cert
-      ca_path = '/tmp/bosh_ca_cert.pem'
-      File.open(ca_path, 'w') { |file| file.write(@bosh_ca_cert) }
-      http.ca_file = File.path(ca_path)
-    end
-
-    http
+  def bosh_director_url
+    bosh_env = @bosh_environment.to_s
+    bosh_env.start_with?(%r{http[s]?://}) ? bosh_env : 'https://' + bosh_env
   end
 
-  def authorize
-    http = construct_http_client(@bosh_environment.to_s, 8_443)
-    request = Net::HTTP::Post.new('/oauth/token')
-    form = URI.encode_www_form('grant_type' => 'client_credentials',
-                               'client_id' => @bosh_client,
-                               'client_secret' => @bosh_client_secret)
-    case response = http.request(request, form)
-    when !Net::HTTPSuccess then
-      raise "Authentication request failed. #{response.value}"
+  def bosh_api
+    Faraday.new(url: bosh_director_url, ssl: { ca_file: @ca_path }) do |faraday|
+      faraday.port = 25_555
+      # faraday.response :logger
+      faraday.authorization :Bearer, access_token
+      faraday.adapter Faraday.default_adapter
     end
+  end
+
+  def access_token
+    return @access_token if @access_token
+
+    conn = Faraday.new(url: bosh_director_url, ssl: { ca_file: @ca_path }) do |faraday|
+      faraday.port = 8_443
+      # faraday.response :logger
+      faraday.adapter Faraday.default_adapter
+    end
+
+    response = conn.post('/oauth/token', 'grant_type' => 'client_credentials',
+                                         'client_id' => @bosh_client,
+                                         'client_secret' => @bosh_client_secret)
+
+    pp response
+
     @access_token = JSON.parse(response.body)['access_token']
   end
 end

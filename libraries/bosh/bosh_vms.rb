@@ -26,6 +26,9 @@ class BoshVms < Inspec.resource(1)
       @params = @bosh_client.get("/deployments/#{deployment_name}/vms?format=full")
                             .group_by { |vm_stats| vm_stats['job_name'] }
     rescue => e
+      puts "Error during processing: #{$ERROR_INFO}"
+      puts "Backtrace:\n\t#{e.backtrace.join("\n\t")}"
+
       raise Inspec::Exceptions::ResourceSkipped, "BOSH API error: #{e}"
     end
   end

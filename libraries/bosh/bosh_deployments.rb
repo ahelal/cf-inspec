@@ -27,6 +27,9 @@ class BoshDeployments < Inspec.resource(1)
                             .group_by { |d| d['name'] }
                             .each_with_object({}) { |(k, v), h| h[k] = v.first }
     rescue => e
+      puts "Error during processing: #{$ERROR_INFO}"
+      puts "Backtrace:\n\t#{e.backtrace.join("\n\t")}"
+
       raise Inspec::Exceptions::ResourceSkipped, "BOSH API error: #{e}"
     end
   end
