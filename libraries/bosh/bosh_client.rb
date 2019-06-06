@@ -5,8 +5,6 @@ require 'bosh/bosh_deployments'
 require 'bosh/bosh_info'
 require 'bosh/bosh_vms'
 
-require 'pp'
-
 class BoshClient
   def initialize
     @bosh_client = ENV['BOSH_CLIENT'] || raise('no BOSH_CLIENT defined')
@@ -22,7 +20,6 @@ class BoshClient
     request = Net::HTTP::Get.new(path, Authorization: "Bearer #{@access_token}")
     request.basic_auth(@bosh_client, @bosh_client_secret)
     response = http.request(request)
-    raise('got a bad response code from BOSH API call') unless response.code != 200
     JSON.parse(response.body)
   end
 
@@ -56,9 +53,6 @@ class BoshClient
     when !Net::HTTPSuccess then
       raise "Authentication request failed. #{response.value}"
     end
-
-    pp response.body
-
     @access_token = JSON.parse(response.body)['access_token']
   end
 end
