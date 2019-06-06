@@ -24,13 +24,10 @@ class BoshVms < Inspec.resource(1)
     begin
       @bosh_client = BoshClient.new
       @params = @bosh_client.get("/deployments/#{deployment_name}/vms?format=full")
+                            .group_by { |vm_stats| vm_stats['job_name'] }
     rescue => e
       raise Inspec::Exceptions::ResourceSkipped, "BOSH API error: #{e}"
     end
-  end
-
-  def for_job_matching(r)
-    @params.select { |vm_stats| vm_stats['job_name'].match? r }
   end
 
   def method_missing(*keys)
