@@ -48,8 +48,6 @@ class BoshClient
                                          'client_id' => @bosh_client,
                                          'client_secret' => @bosh_client_secret)
 
-    pp response
-
     @access_token = JSON.parse(response.body)['access_token']
   end
 end
