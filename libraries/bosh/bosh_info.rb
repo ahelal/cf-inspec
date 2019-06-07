@@ -28,7 +28,7 @@ class BoshInfo < Inspec.resource(1)
       puts "Error during processing: #{$ERROR_INFO}"
       puts "Backtrace:\n\t#{e.backtrace.join("\n\t")}"
 
-      raise Inspec::Exceptions::ResourceSkipped, "BOSH API error: #{e}"
+      raise Inspec::Exceptions::ResourceFailed, "BOSH API error: #{e}"
     end
   end
 

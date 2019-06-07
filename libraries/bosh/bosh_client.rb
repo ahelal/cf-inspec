@@ -20,6 +20,7 @@ class BoshClient
 
   def get(path)
     response = bosh_api.get path
+    raise "GET failed (#{response.status}):\n\t#{response.body}" unless response.success?
 
     JSON.parse(response.body)
   end
@@ -47,6 +48,8 @@ class BoshClient
     response = conn.post('/oauth/token', 'grant_type' => 'client_credentials',
                                          'client_id' => @bosh_client,
                                          'client_secret' => @bosh_client_secret)
+
+    raise "Access Token request failed (#{response.status}):\n\t#{response.body}" unless response.success?
 
     @access_token = JSON.parse(response.body)['access_token']
   end

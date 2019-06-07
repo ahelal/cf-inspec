@@ -7,11 +7,7 @@ class BoshVms < Inspec.resource(1)
 
   example "
     describe bosh_vms('cf-warden') do
-      its('keys') { should contain '263.1.0' }
-      its(['user_authentication','type']) { should eq 'uaa'}
-      its(['user_authentication','options', 'url']) { should eq 'https://10.0.0.6:8443'}
-      its(['features', 'dns', 'status']) { should be false }
-      its(['features', 'dns', 'extras', 'domain_name']) { should eq 'bosh' }
+      its('diego_cell') { should all include('vm_type' => '2xlarge') }
     end
   "
 
@@ -29,7 +25,7 @@ class BoshVms < Inspec.resource(1)
       puts "Error during processing: #{$ERROR_INFO}"
       puts "Backtrace:\n\t#{e.backtrace.join("\n\t")}"
 
-      raise Inspec::Exceptions::ResourceSkipped, "BOSH API error: #{e}"
+      raise Inspec::Exceptions::ResourceFailed, "BOSH API error: #{e}"
     end
   end
 
