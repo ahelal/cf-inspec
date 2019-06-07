@@ -44,6 +44,7 @@ class BoshVms < Inspec.resource(1)
       sleep 1
     end
     @bosh_client.get("/tasks/#{task_id}/output?type=result")
+                .tap { |r| pp r }
                 .group_by { |vm_stats| vm_stats['job_name'] }
   rescue => e
     puts "Error during processing: #{$ERROR_INFO}"

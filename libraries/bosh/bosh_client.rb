@@ -24,8 +24,6 @@ class BoshClient
     response = http_client(25_555).get(path, Authorization: "Bearer #{access_token}")
     case response
     when Net::HTTPSuccess then
-      pp response.body
-
       JSON.parse(response.body)
     when Net::HTTPRedirection then
       get(response['location'], redirects_remaining - 1)
