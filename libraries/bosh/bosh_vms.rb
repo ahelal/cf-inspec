@@ -16,17 +16,7 @@ class BoshVms < Inspec.resource(1)
   attr_reader :params
 
   def initialize(deployment_name)
-    @params = {}
-    begin
-      @bosh_client = BoshClient.new
-      @params = @bosh_client.get("/deployments/#{deployment_name}/vms?format=full")
-                            .group_by { |vm_stats| vm_stats['job_name'] }
-    rescue => e
-      puts "Error during processing: #{$ERROR_INFO}"
-      puts "Backtrace:\n\t#{e.backtrace.join("\n\t")}"
-
-      raise Inspec::Exceptions::ResourceFailed, "BOSH API error: #{e}"
-    end
+    @params = fetch_vms(deployment_name)
   end
 
   def method_missing(*keys)
@@ -40,5 +30,25 @@ class BoshVms < Inspec.resource(1)
     # uses ObjectTraverser.extract_value to walk the hash looking for the key,
     # which may be an Array of keys for a nested Hash.
     extract_value(key, params)
+  end
+
+  private
+
+  def fetch_vms(deployment_name)
+    @bosh_client = BoshClient.new
+    vms_response = @bosh_client.get("/deployments/#{deployment_name}/vms?format=full")
+    task_id = vms_response['id']
+    for _ in 1..5
+      task_response = @bosh_client.get("/tasks/#{task_id}")
+      break if task_response['state'] == 'done'
+      sleep 1
+    end
+    @bosh_client.get("/tasks/#{task_id}/output?type=result")
+                .group_by { |vm_stats| vm_stats['job_name'] }
+  rescue => e
+    puts "Error during processing: #{$ERROR_INFO}"
+    puts "Backtrace:\n\t#{e.backtrace.join("\n\t")}"
+
+    raise Inspec::Exceptions::ResourceFailed, "BOSH API error: #{e}"
   end
 end

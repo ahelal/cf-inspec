@@ -8,6 +8,8 @@ context 'bosh_deployments' do
     ENV['BOSH_CLIENT'] = 'admin'
     ENV['BOSH_CLIENT_SECRET'] = 'secret'
     allow_any_instance_of(BoshClient).to receive(:get).with('/deployments/cf-warden/vms?format=full').and_return(vms_response)
+    allow_any_instance_of(BoshClient).to receive(:get).with('/tasks/230916').and_return(task_response)
+    allow_any_instance_of(BoshClient).to receive(:get).with('/tasks/230916/output?type=result').and_return(task_output)
   end
 
   it 'returns the vms keyed by job_name' do
@@ -16,6 +18,18 @@ context 'bosh_deployments' do
   end
 
   let(:vms_response) do
+    JSON.parse(<<-JSON)
+      {"id":230916,"state":"queued","description":"retrieve vm-stats","timestamp":1559894399,"started_at":1559894397,"result":"","user":"ops_manager","deployment":"cf-warden","context_id":""}
+    JSON
+  end
+
+  let(:task_response) do
+    JSON.parse(<<-JSON)
+      {"id":230916,"state":"done","description":"retrieve vm-stats","timestamp":1559894399,"started_at":1559894397,"result":"","user":"ops_manager","deployment":"cf-warden","context_id":""}
+    JSON
+  end
+
+  let(:task_output) do
     JSON.parse(<<-JSON)
       [
         {

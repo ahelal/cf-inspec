@@ -11,3 +11,7 @@ Metrics/MethodLength:
   Max: 20
 Style/BlockComments:
   Enabled: false
+Style/For:
+  Enabled: false
+Metrics/AbcSize:
+  Max: 18
