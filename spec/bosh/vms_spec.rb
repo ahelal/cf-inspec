@@ -18,108 +18,108 @@ context 'bosh_deployments' do
   end
 
   let(:vms_response) do
-    JSON.parse(<<-JSON)
+    <<-JSON
       {"id":230916,"state":"queued","description":"retrieve vm-stats","timestamp":1559894399,"started_at":1559894397,"result":"","user":"ops_manager","deployment":"cf-warden","context_id":""}
     JSON
   end
 
   let(:task_response) do
-    JSON.parse(<<-JSON)
+    <<-JSON
       {"id":230916,"state":"done","description":"retrieve vm-stats","timestamp":1559894399,"started_at":1559894397,"result":"","user":"ops_manager","deployment":"cf-warden","context_id":""}
     JSON
   end
 
   let(:task_output) do
-    JSON.parse(<<-JSON)
-      [
-        {
-          "vm_cid": "3938cc70-8f5e-4318-ad05-24d991e0e66e",
-          "disk_cid": null,
-          "ips": ["10.0.1.3"],
-          "dns": [],
-          "agent_id": "d927e75b-2a2d-4015-b5cc-306a067e94e9",
-          "job_name": "example_service",
-          "index": 0,
-          "job_state": "running",
-          "state": "started",
-          "resource_pool": "resource_pool_1",
-          "vm_type": "resource_pool_1",
-          "vitals": {
-              "cpu": {
-                  "sys": "0.3",
-                  "user": "0.1",
-                  "wait": "0.0"
-              },
-              "disk": {
-                  "ephemeral": {
-                      "inode_percent": "5",
-                      "percent": "32"
-                  },
-                  "persistent": {
-                      "inode_percent": "3",
-                      "percent": "67"
-                  },
-                  "system": {
-                      "inode_percent": "34",
-                      "percent": "66"
-                  }
-              },
-              "load": ["0.00", "0.01", "0.10"],
-              "mem": {
-                  "kb": "605008",
-                  "percent": "7"
-              },
-              "swap": {
-                  "kb": "75436",
-                  "percent": "1"
-              }
-          },
-          "processes": [{
-              "name": "beacon",
-              "state": "running",
-              "uptime": {
-                  "secs": 1212184
-              },
-              "mem": {
-                  "kb": 776,
-                  "percent": 0
-              },
-              "cpu": {
-                  "total": 0
-              }
-          }, {
-              "name": "baggageclaim",
-              "state": "running",
-              "uptime": {
-                  "secs": 1212152
-              },
-              "mem": {
-                  "kb": 8920,
-                  "percent": 0.1
-              },
-              "cpu": {
-                  "total": 0
-              }
-          }, {
-              "name": "garden",
-              "state": "running",
-              "uptime": {
-                  "secs": 1212153
-              },
-              "mem": {
-                  "kb": 235004,
-                  "percent": 2.8
-              },
-              "cpu": {
-                  "total": 0.2
-              }
-          }],
-          "az": null,
-          "id": "abe6a4e9-cfca-490b-8515-2893f9e54d20",
-          "bootstrap": false,
-          "ignore": false
-        }
-      ]
+    multiline = <<-JSON
+      {
+        "vm_cid": "3938cc70-8f5e-4318-ad05-24d991e0e66e",
+        "disk_cid": null,
+        "ips": ["10.0.1.3"],
+        "dns": [],
+        "agent_id": "d927e75b-2a2d-4015-b5cc-306a067e94e9",
+        "job_name": "example_service",
+        "index": 0,
+        "job_state": "running",
+        "state": "started",
+        "resource_pool": "resource_pool_1",
+        "vm_type": "resource_pool_1",
+        "vitals": {
+            "cpu": {
+                "sys": "0.3",
+                "user": "0.1",
+                "wait": "0.0"
+            },
+            "disk": {
+                "ephemeral": {
+                    "inode_percent": "5",
+                    "percent": "32"
+                },
+                "persistent": {
+                    "inode_percent": "3",
+                    "percent": "67"
+                },
+                "system": {
+                    "inode_percent": "34",
+                    "percent": "66"
+                }
+            },
+            "load": ["0.00", "0.01", "0.10"],
+            "mem": {
+                "kb": "605008",
+                "percent": "7"
+            },
+            "swap": {
+                "kb": "75436",
+                "percent": "1"
+            }
+        },
+        "processes": [{
+            "name": "beacon",
+            "state": "running",
+            "uptime": {
+                "secs": 1212184
+            },
+            "mem": {
+                "kb": 776,
+                "percent": 0
+            },
+            "cpu": {
+                "total": 0
+            }
+        }, {
+            "name": "baggageclaim",
+            "state": "running",
+            "uptime": {
+                "secs": 1212152
+            },
+            "mem": {
+                "kb": 8920,
+                "percent": 0.1
+            },
+            "cpu": {
+                "total": 0
+            }
+        }, {
+            "name": "garden",
+            "state": "running",
+            "uptime": {
+                "secs": 1212153
+            },
+            "mem": {
+                "kb": 235004,
+                "percent": 2.8
+            },
+            "cpu": {
+                "total": 0.2
+            }
+        }],
+        "az": null,
+        "id": "abe6a4e9-cfca-490b-8515-2893f9e54d20",
+        "bootstrap": false,
+        "ignore": false
+      }
     JSON
+
+    multiline.lines.map(&:strip).join('')
   end
 end

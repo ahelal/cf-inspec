@@ -1,4 +1,5 @@
 # require 'bosh_api'
+require 'json'
 require 'pp'
 
 class BoshVms < Inspec.resource(1)
@@ -36,15 +37,16 @@ class BoshVms < Inspec.resource(1)
 
   def fetch_vms(deployment_name)
     @bosh_client = BoshClient.new
-    vms_response = @bosh_client.get("/deployments/#{deployment_name}/vms?format=full")
+    vms_response = JSON.parse(@bosh_client.get("/deployments/#{deployment_name}/vms?format=full"))
     task_id = vms_response['id']
     for _ in 1..5
-      task_response = @bosh_client.get("/tasks/#{task_id}")
+      task_response = JSON.parse(@bosh_client.get("/tasks/#{task_id}"))
       break if task_response['state'] == 'done'
       sleep 1
     end
     @bosh_client.get("/tasks/#{task_id}/output?type=result")
-                .tap { |r| pp r }
+                .lines
+                .map { |l| JSON.parse(l) }
                 .group_by { |vm_stats| vm_stats['job_name'] }
   rescue => e
     puts "Error during processing: #{$ERROR_INFO}"

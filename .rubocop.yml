@@ -14,4 +14,4 @@ Style/BlockComments:
 Style/For:
   Enabled: false
 Metrics/AbcSize:
-  Max: 18
+  Max: 25

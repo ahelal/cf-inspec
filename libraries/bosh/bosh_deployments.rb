@@ -1,4 +1,5 @@
 # require 'bosh_api'
+require 'json'
 require 'pp'
 
 class BoshDeployments < Inspec.resource(1)
@@ -19,9 +20,9 @@ class BoshDeployments < Inspec.resource(1)
     @params = {}
     begin
       @bosh_client = BoshClient.new
-      @params = @bosh_client.get('/deployments?exclude_configs=true')
-                            .group_by { |d| d['name'] }
-                            .each_with_object({}) { |(k, v), h| h[k] = v.first }
+      deployments = JSON.parse(@bosh_client.get('/deployments?exclude_configs=true'))
+      @params = deployments.group_by { |d| d['name'] }
+                           .each_with_object({}) { |(k, v), h| h[k] = v.first }
     rescue => e
       puts "Error during processing: #{$ERROR_INFO}"
       puts "Backtrace:\n\t#{e.backtrace.join("\n\t")}"

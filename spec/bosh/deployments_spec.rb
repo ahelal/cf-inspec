@@ -19,7 +19,7 @@ context 'bosh_deployments' do
   end
 
   let(:deployments_response) do
-    JSON.parse(<<-JSON)
+    <<-JSON
       [
         {
           "name": "cf-warden",

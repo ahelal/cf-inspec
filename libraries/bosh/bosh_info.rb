@@ -1,4 +1,5 @@
 # require 'bosh_api'
+require 'json'
 require 'pp'
 
 class BoshInfo < Inspec.resource(1)
@@ -23,7 +24,7 @@ class BoshInfo < Inspec.resource(1)
     @params = {}
     begin
       @bosh_client = BoshClient.new
-      @params = @bosh_client.get '/info'
+      @params = JSON.parse(@bosh_client.get('/info'))
     rescue => e
       puts "Error during processing: #{$ERROR_INFO}"
       puts "Backtrace:\n\t#{e.backtrace.join("\n\t")}"
