@@ -38,8 +38,9 @@ class BoshClient
   def http_client(port)
     bosh_env = @bosh_environment.to_s
     bosh_env = 'https://' + bosh_env unless bosh_env.start_with? %r{http[s]?://}
-
-    http = Net::HTTP.new(URI(bosh_env).host, port)
+    uri = URI(bosh_env)
+    http = Net::HTTP.new(uri.host, port)
+    http.use_ssl = uri.scheme == 'https'
     http.ca_file = File.new(@ca_path)
     http
   end
