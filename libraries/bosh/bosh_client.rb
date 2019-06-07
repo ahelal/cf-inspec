@@ -44,7 +44,7 @@ class BoshClient
   def access_token
     return @access_token if @access_token
 
-    conn = Faraday.new(url: bosh_director_host, ssl: {ca_file: @ca_path })
+    conn = Faraday.new(url: bosh_director_host, ssl: { ca_file: @ca_path })
     conn.port = 8_443
 
     response = conn.post('/oauth/token', 'grant_type' => 'client_credentials',
