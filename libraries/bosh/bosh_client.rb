@@ -33,12 +33,13 @@ class BoshClient
   end
 
   def bosh_api
-    Faraday.new(url: bosh_director_url, ssl: { ca_file: @ca_path }) do |f|
-      f.port = 25_555
-      f.authorization :Bearer, access_token
+    conn = Faraday.new(url: bosh_director_url, ssl: { ca_file: @ca_path }) do |f|
       f.use FaradayMiddleware::FollowRedirects, limit: 3
+      f.authorization :Bearer, access_token
       f.adapter Faraday.default_adapter
     end
+    conn.port = 25_555
+    conn
   end
 
   def access_token
