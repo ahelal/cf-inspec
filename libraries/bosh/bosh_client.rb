@@ -27,25 +27,24 @@ class BoshClient
 
   private
 
-  def bosh_director_url
+  def bosh_director_host
     bosh_env = @bosh_environment.to_s
     bosh_env.start_with?(%r{http[s]?://}) ? bosh_env : 'https://' + bosh_env
     'https://' + URI(bosh_env).host
   end
 
   def bosh_api
-    conn = Faraday.new(url: bosh_director_url + ':25555', ssl: { ca_file: @ca_path }) do |f|
+    Faraday.new(url: "#{bosh_director_host}:25555", ssl: { ca_file: @ca_path }) do |f|
       f.use FaradayMiddleware::FollowRedirects, limit: 3
       f.authorization :Bearer, access_token
       f.adapter :net_http
     end
-    conn
   end
 
   def access_token
     return @access_token if @access_token
 
-    conn = Faraday.new(url: bosh_director_url, ssl: { ca_file: @ca_path })
+    conn = Faraday.new(url: bosh_director_host, ssl: {ca_file: @ca_path })
     conn.port = 8_443
 
     response = conn.post('/oauth/token', 'grant_type' => 'client_credentials',
