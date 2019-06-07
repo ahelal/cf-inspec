@@ -41,7 +41,7 @@ class BoshClient
     uri = URI(bosh_env)
     http = Net::HTTP.new(uri.host, port)
     http.use_ssl = uri.scheme == 'https'
-    http.ca_file = File.new(@ca_path)
+    http.ca_file = File.path(@ca_path) unless @bosh_ca_cert.nil?
     http
   end
 
