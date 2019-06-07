@@ -18,43 +18,45 @@ class BoshClient
     File.open(@ca_path, 'w') { |file| file.write(@bosh_ca_cert) } if @bosh_ca_cert
   end
 
-  def get(path)
-    response = bosh_api.get path
-    raise "GET failed (#{response.status}):\n\t#{response.body}" unless response.success?
+  def get(path, redirects_remaining = 3)
+    raise 'too many redirects' if redirects_remaining.zero?
 
-    JSON.parse(response.body)
+    response = http_client(25_555).get(path, Authorization: "Bearer #{access_token}")
+    case response
+    when Net::HTTPSuccess then
+      JSON.parse(response.body)
+    when Net::HTTPRedirection then
+      puts response['location']
+      get(response['location'], redirects_remaining - 1)
+    else
+      response.error!
+    end
   end
 
   private
 
-  def bosh_director_host
+  def http_client(port)
     bosh_env = @bosh_environment.to_s
     bosh_env = 'https://' + bosh_env unless bosh_env.start_with? %r{http[s]?://}
-    "https://#{URI(bosh_env).host}"
-  end
 
-  def bosh_api
-    conn = Faraday.new(url: bosh_director_host, ssl: { ca_file: @ca_path }) do |f|
-      f.use FaradayMiddleware::FollowRedirects, limit: 3
-      f.authorization :Bearer, access_token
-      f.adapter :net_http
-    end
-    conn.port = 25_555
-    conn
+    http = Net::HTTP.new(URI(bosh_env).host, port)
+    http.ca_file = File.new(@ca_path)
+    http
   end
 
   def access_token
     return @access_token if @access_token
 
-    conn = Faraday.new(url: bosh_director_host, ssl: { ca_file: @ca_path })
-    conn.port = 8_443
+    request = Net::HTTP::Post.new('/oauth/token')
+    body = URI.encode_www_form('grant_type' => 'client_credentials',
+                               'client_id' => @bosh_client,
+                               'client_secret' => @bosh_client_secret)
 
-    response = conn.post('/oauth/token', 'grant_type' => 'client_credentials',
-                                         'client_id' => @bosh_client,
-                                         'client_secret' => @bosh_client_secret)
-
-    raise "Access Token request failed (#{response.status}):\n\t#{response.body}" unless response.success?
-
-    @access_token = JSON.parse(response.body)['access_token']
+    case response = http_client(8_443).request(request, body)
+    when Net::HTTPSuccess then
+      @access_token = JSON.parse(response.body)['access_token']
+    else
+      response.error!
+    end
   end
 end
