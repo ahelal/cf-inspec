@@ -30,7 +30,7 @@ class BoshClient
   def bosh_director_host
     bosh_env = @bosh_environment.to_s
     bosh_env.start_with?(%r{http[s]?://}) ? bosh_env : 'https://' + bosh_env
-    'https://' + URI(bosh_env).host
+    "https://#{URI(bosh_env).host}"
   end
 
   def bosh_api
