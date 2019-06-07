@@ -1,13 +1,13 @@
 # require 'bosh_api'
 require 'pp'
 
-class BoshConfig < Inspec.resource(1)
-  name 'bosh_config'
-  desc 'Verify info about bosh director version, user authentication or features'
+class BoshDeployments < Inspec.resource(1)
+  name 'bosh_deployments'
+  desc 'Verify info about bosh deployments'
 
   example "
-    describe bosh_info do
-      its('version') { should match '263.1.0' }
+    describe bosh_deployments do
+      its('keys') { should contain '263.1.0' }
       its(['user_authentication','type']) { should eq 'uaa'}
       its(['user_authentication','options', 'url']) { should eq 'https://10.0.0.6:8443'}
       its(['features', 'dns', 'status']) { should be false }
@@ -17,16 +17,22 @@ class BoshConfig < Inspec.resource(1)
 
   include ObjectTraverser
 
-  attr_reader :params, :raw_content
+  attr_reader :params
 
-  def initialize(_path = nil)
+  def initialize
     @params = {}
     begin
       @bosh_client = BoshClient.new
-      @params = @bosh_client.info
+      @params = @bosh_client.get('/deployments?exclude_configs=true')
+                            .group_by { |d| d['name'] }
+                            .each_with_object({}) { |(k, v), h| h[k] = v.first }
     rescue => e
       raise Inspec::Exceptions::ResourceSkipped, "BOSH API error: #{e}"
     end
+  end
+
+  def deployment_names
+    @params.keys
   end
 
   def method_missing(*keys)
