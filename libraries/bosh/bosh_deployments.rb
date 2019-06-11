@@ -2,35 +2,37 @@
 require 'json'
 require 'pp'
 
-class BoshInfo < Inspec.resource(1)
-  name 'bosh_info'
-  desc 'Verify info about bosh director version, user authentication or features'
+class BoshDeployments < Inspec.resource(1)
+  name 'bosh_deployments'
+  desc 'Verify info about bosh deployments'
 
   example "
-    describe bosh_info do
-      its('version') { should match '263.1.0' }
-      its(['user_authentication','type']) { should eq 'uaa'}
-      its(['user_authentication','options', 'url']) { should eq 'https://10.0.0.6:8443'}
-      its(['features', 'dns', 'status']) { should be false }
-      its(['features', 'dns', 'extras', 'domain_name']) { should eq 'bosh' }
+    describe bosh_deployments do
+      its('deployment_names') { should include(match(/cf-.+/)) }
     end
   "
 
   include ObjectTraverser
 
-  attr_reader :params, :raw_content
+  attr_reader :params
 
-  def initialize(_path = nil)
+  def initialize
     @params = {}
     begin
       @bosh_client = BoshClient.new
-      @params = JSON.parse(@bosh_client.get('/info'))
+      deployments = JSON.parse(@bosh_client.get('/deployments?exclude_configs=true'))
+      @params = deployments.group_by { |d| d['name'] }
+                           .each_with_object({}) { |(k, v), h| h[k] = v.first }
     rescue => e
       puts "Error during processing: #{$ERROR_INFO}"
       puts "Backtrace:\n\t#{e.backtrace.join("\n\t")}"
 
       raise Inspec::Exceptions::ResourceFailed, "BOSH API error: #{e}"
     end
+  end
+
+  def deployment_names
+    @params.keys
   end
 
   def method_missing(*keys)
